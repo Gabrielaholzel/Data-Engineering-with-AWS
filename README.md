@@ -75,6 +75,29 @@ This model **organizes data** into one or morte **tables** (or "relations") of *
 
 ![Relation](Images/relational-databases-relation.jpg)
 
+> "A **relational database** (term invented by *Edgar Codd* in 1970) is a digital database **based on the relational model** of data... a software system used to maintain relational databases is a *relational database management system* (**RDBMS**)." --Wikipedia
+
+> "**SQL** (*Structured Query Language*) is the language used across almost all relational database system for querying and maintaining the database." --Wikipedia
+
+**Common Types of Relational Databases:**
+* *Oracle:* Used by almost every enterprise as their system of truth that handles *ACID* transactions. For example, banking systems run on Oracle.
+* *Teradata*
+* *MySQL*
+* *PostgreSQL*
+* *Sqlite:* Is a database in file format, and is generally used in development of extremely simple tasks in an application.
+
+**To summarize:**
+* **Database/Schema:** Collection of tables.
+* **Tables/Relations:** Group of rows sharing the same labeled elements.
+
+
+
+
+
+
+
+
+
 
 
 
