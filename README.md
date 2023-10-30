@@ -92,7 +92,34 @@ This model **organizes data** into one or morte **tables** (or "relations") of *
 
 
 
+### Advantages of using a Relational Database
+* **Flexibility for writing in SQL queries:** With SQL being the most common database query language.
+* **Modeling the data** not modeling queries
+* **Ability to do JOINS**
+* **Ability to do aggregations and analytics**
+* **Secondary Indexes available :** You have the advantage of being able to add another index to help with quick searching.
+* **Smaller data volumes:** If you have a smaller data volume (and not big data) you can use a relational database for its simplicity.
+* **ACID Transactions:** Allows you to meet a set of properties of database transactions intended to guarantee validity even in the event of errors, power failures, and thus maintain data integrity.
+* **Easier to change to business requirements**
 
+#### ACID Transactions
+
+> "... properties of database transactions intended to **guarantee validity** even in the event of **errors, power failures**..." --Wikipedia
+
+* **Atomicity:** <u>The whole transaction is processed or nothing is processed</u>. A commonly cited example of an atomic transaction is money transactions between two bank accounts. The transaction of transferring money from one account to the other is made up of two operations. First, you have to withdraw money in one account, and second you have to save the withdrawn money to the second account. An atomic transaction, i.e., when either all operations occur or nothing occurs, keeps the database in a consistent state. This ensures that if either of those two operations (withdrawing money from the 1st account or saving the money to the 2nd account) fail, the money is neither lost nor created. Source: [Wikipedia](https://en.wikipedia.org/wiki/Atomicity_%28database_systems%29) for a detailed description of this example.
+* **Consistency:** <u>Only transactions that abide by constraints and rules are written into the database, otherwise the database keeps the previous state</u>. The data should be correct across all rows and tables. Check out additional information about consistency on [Wikipedia](https://en.wikipedia.org/wiki/Consistency_%28database_systems%29).
+* **Isolation:** <u>Transactions are processed independently and securely, order does not matter</u>. A low level of isolation enables many users to access the data simultaneously, however this also increases the possibilities of concurrency effects (e.g., dirty reads or lost updates). On the other hand, a high level of isolation reduces these chances of concurrency effects, but also uses more system resources and transactions blocking each other. Source: [Wikipedia](https://en.wikipedia.org/wiki/Isolation_%28database_systems%29)
+* **Durability:** <u>Completed transactions are saved to database even in cases of system failure</u>. A commonly cited example includes tracking flight seat bookings. So once the flight booking records a confirmed seat booking, the seat remains booked even if a system failure occurs. Source: [Wikipedia](https://en.wikipedia.org/wiki/Durability_%28database_systems%29).
+
+
+
+#### When Not to Use a Relational Database
+* **Have large amounts of data:** Relational Databases are not distributed databases and because of this they can only scale vertically by adding more storage in the machine itself. You are limited by how much you can scale and how much data you can store on one machine. You cannot add more machines like you can in NoSQL databases.
+* **Need to be able to store different data type formats:** Relational databases are not designed to handle unstructured data.
+* **Need high throughput -- fast reads:** While ACID transactions bring benefits, they also slow down the process of reading and writing data. If you need very fast reads and writes, using a relational database may not suit your needs.
+* **Need a flexible schema:** Flexible schema can allow for columns to be added that do not have to be used by every row, saving disk space.
+* **Need high availability:** The fact that relational databases are not distributed (and even when they are, they have a coordinator/worker architecture), they have a single point of failure. When that database goes down, a fail-over to a backup system occurs and takes time.
+* **Need horizontal scalability:** Horizontal scalability is the ability to add more machines or nodes to a system to increase performance and space for data.
 
 
 
