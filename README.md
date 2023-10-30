@@ -73,7 +73,7 @@ According to [AWS](https://aws.amazon.com/what-is/data-modeling/), organizations
 This model **organizes data** into one or morte **tables** (or "relations") of **columns and rows**, with a **unique key* identifying each row. Generally, each table represents one "entity type" (such as customer or product).
 
 
-![alt text](http://url/to/img.png)
+![Relation](Images/relational-databases-relation.jpg)
 
 
 
