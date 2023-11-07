@@ -145,7 +145,7 @@ NoSQL databases were created do some of the issues faced with Relational Databas
 -   Apache HBase (Wide Column Store)
 -   Neo4J (Graph Database)
 
-![Relation](Images/Images/Apache-Cassandra.png)
+![Relation](Images/Apache-Cassandra.png)
 
 
 
