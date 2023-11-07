@@ -132,8 +132,20 @@ PostgreSQL is an open-source object-relational database system.
 All relational and non-relational databases tend to have their own SQL syntax and operations you can perform that are different between types of implementations. This note is just to make you aware of this, this course is focused on data modeling concepts.
 
 
+## Introduction to NoSQL Databases
+> _"A NoSQL database  has a simpler design, simpler horizontal scaling, and finer control of availability. Data structures used are different than those in Relational Databases: they make some operations faster." --Wikipedia_
 
+NoSQL databases were created do some of the issues faced with Relational Databases. NoSQL databases have been around since the 1970’s but they became more popular in use since the 2000’s as data sizes has increased, and outages/downtime has decreased in acceptability.
 
+**NoSQL Database Implementations:**
+
+-   Apache Cassandra (Partition Row store)
+-   MongoDB (Document store)
+-   DynamoDB (Key-Value store)
+-   Apache HBase (Wide Column Store)
+-   Neo4J (Graph Database)
+
+![Relation](Images/Images/Apache-Cassandra.png)
 
 
 
