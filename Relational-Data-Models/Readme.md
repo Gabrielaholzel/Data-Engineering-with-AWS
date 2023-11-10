@@ -48,3 +48,29 @@ Normalization will feel like a natural process, you will reduce the number of co
 Here is an example table we will be using later in our demo and exercises. Let’s say we have a table called music_library, looks pretty standard but this is not a normalized table.
 
 ![Relational data that is not normalized](https://video.udacity-data.com/topher/2021/August/612dd42e_use-this-version-data-modeling-lesson-2/use-this-version-data-modeling-lesson-2.png)
+
+#### Objectives of Normal Form:
+
+1.  To free the database from unwanted insertions, updates, & deletion dependencies
+2.  To reduce the need for refactoring the database as new types of data are introduced
+3.  To make the relational model more informative to users
+4.  To make the database neutral to the query statistics
+
+#### Process of Normalization
+1.  **How to reach First Normal Form (1NF):** 
+    -   Atomic values: each cell contains unique and single values  
+    -   Be able to add data without altering tables  
+    -   Separate different relations into different tables  
+    -   Keep relationships between tables together with foreign keys
+
+2.  **Second Normal Form (2NF):**  
+    -   Have reached 1NF
+    -   All columns in the table must rely on the Primary Key
+
+3.  **Third Normal Form (3NF):**  
+    -   Must be in 2nd Normal Form
+    -   No transitive dependencies
+    -   Remember, transitive dependencies you are trying to maintain is that to get from A-> C, you want to avoid going through B.
+
+**When to use 3NF:**
+When you want to update data, we want to be able to do in just 1 place. We want to avoid updating the table in the Customers Detail table (in the example in the lecture slide).
