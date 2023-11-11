@@ -74,3 +74,47 @@ Here is an example table we will be using later in our demo and exercises. Letâ€
 
 **When to use 3NF:**
 When you want to update data, we want to be able to do in just 1 place. We want to avoid updating the table in the Customers Detail table (in the example in the lecture slide).
+
+**Denormalization:**
+The process of trying to improve the read performance of a database at the expense of losing some write performance by adding redundant copies of data.
+
+JOINS on the database allow for outstanding flexibility but are extremely slow. If you are dealing with heavy reads on your database, you may want to think about denormalizing your tables. You get your data into normalized form, and then you proceed with denormalization. So, denormalization comes after normalization.
+
+**Logical Design Change**
+1. The Designer is in charge of keeping data consistent
+2. Reads will be faster (select)
+3. Writes will be slower (insert, update, delete)
+
+# Denormalization Vs. Normalization
+
+Let's take a moment to make sure you understand what was in the demo regarding denormalized vs. normalized data. These are important concepts, so make sure to spend some time reflecting on these.
+
+**Normalization**  is about trying to increase data integrity by reducing the number of copies of the data. Data that needs to be added or updated will be done in as few places as possible.
+
+**Denormalization**  is trying to increase performance by reducing the number of joins between tables (as joins can be slow). Data integrity will take a bit of a potential hit, as there will be more copies of the data (to reduce JOINS).
+
+## Example of Denormalized Data:
+
+As you saw in the earlier demo, this denormalized table contains a column with the Artist name that includes duplicated rows, and another column with a list of songs.
+
+![](https://video.udacity-data.com/topher/2019/March/5c788517_table1/table1.png)
+
+## Example of Normalized Data:
+
+Now for normalized data, Amanda used 3NF. You see a few changes:  
+
+1.  _No row contains a list of items._  For e.g., the list of song has been replaced with each song having its own row in the Song table.  
+    
+2.  _Transitive dependencies have been removed_. For e.g., album ID is the PRIMARY KEY for the album year in Album Table. Similarly, each of the other tables have a unique primary key that can identify the other values in the table (e.g., song id and song name within Song table).
+
+#### Song_Table
+
+![](https://video.udacity-data.com/topher/2019/March/5c797e7e_table4/table4.png)
+
+#### Album_Table
+
+![](https://video.udacity-data.com/topher/2019/March/5c797e87_table5/table5.png)
+
+#### Artist_Table
+
+![](https://video.udacity-data.com/topher/2019/March/5c797e8e_table6/table6.png)
