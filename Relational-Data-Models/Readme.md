@@ -118,3 +118,62 @@ Now for normalized data, Amanda used 3NF. You see a few changes:
 #### Artist_Table
 
 ![](https://video.udacity-data.com/topher/2019/March/5c797e8e_table6/table6.png)
+
+
+## Fact and Dimension Tables
+The following image shows the relationship between the fact and dimension tables for the example shown in the video. As you can see in the image, the unique primary key for each Dimension table is included in the Fact table.
+
+**Dimension tables** categorise facts and measures in order to enable users to answer business questions. Dimensions are people, products, place and time.
+
+In this example, it helps to think about the  **Dimension tables**  providing the following information:
+
+-   **Where**  the product was bought? (Dim_Store table)
+-   **When**  the product was bought? (Dim_Date table)
+-   **What**  product was bought? (Dim_Product table)
+
+The  **Fact table**  provides the  **metric of the business process**  (here Sales).
+
+-   **How many**  units of products were bought? (Fact_Sales table)
+
+![](https://video.udacity-data.com/topher/2019/March/5c81772b_dimension-fact-tables/dimension-fact-tables.png)
+
+If you are familiar with  **Entity Relationship Diagrams**  (ERD), you will find the depiction of <u>STAR</u> and <u>SNOWFLAKE</u> schemas in the demo familiar. The ERDs show the data model in a concise way that is also easy to interpret. ERDs can be used for any data model, and are not confined to STAR or SNOWFLAKE schemas. Commonly available tools can be used to generate ERDs. However, more important than creating an ERD is to learn more about the data through conversations with the data team so as a data engineer you have a strong understanding of the data you are working with.
+
+More information about ER diagrams can be found at this  [Wikipedia](https://en.wikipedia.org/wiki/Entity%E2%80%93relationship_model)  page.
+
+### Star Schemas
+Star Schema is the simplest style of data mart schema. <u>The star schema consists of one of more fact tables referencing any number of dimension tables</u>.
+
+-   Gets its name from the physical model resembling a star shape
+-   A fact table is at its center
+-   Dimension table surrounds the fact table representing the star’s points.
+
+#### Additional Resources
+
+Check out this Wikipedia page on  [Star schemas](https://en.wikipedia.org/wiki/Star_schema).
+
+
+#### Benefits of Star Schema
+
+-   **Denormalized:** Getting a table into 3NF is a lot of hard work, JOINs can be complex even on simple data
+-   **Simplified queries:** Star schema allows for the relaxation of these rules and makes queries easier with simple JOINS
+-   **Fast aggregations:** Aggregations perform calculations and clustering of our data so that we do not have to do that work in our application. Examples : COUNT, GROUP BY etc
+
+#### Drawbacks of Star Schema
+- **Issues with denormalization:** Issues like data integrity and decrease query flexibility. 
+- **Data integrity:** You will have duplicated data spread across multiple tables. 
+- **Decrease query flexibility:** When you denormalize tables, you are modeling to your query, so you won't be able to do as many ad-hoc queries on your tables. 
+- **Many to many relationships simplified:** Star schemas only support one to one mappings. Many to many relationships are hard to support, and are abstracted away for sake of simplicity and to fit the model. 
+
+Here you can see an example of a Star Schema:
+
+![Music Store Database with Star Schema](https://video.udacity-data.com/topher/2021/August/612e9c72_use-this-version-data-modeling-lesson-2-1/use-this-version-data-modeling-lesson-2-1.png)
+
+
+### Snowflake Schemas
+It's a logical arrangement of tables in a multidimensional database represented by centralized fact tables which are connected to multiple dimensions. A complex snowflake shape emerges when the dimensions of a snowflake schema are elaborated, having multiple levels of relationships, child tables having multiple parents. 
+
+**Snowflake vs Star Schema**
+-   Star Schema is a special, simplified case of the snowflake schema.
+-   Star schema does not allow for one to many relationships while the snowflake schema does.
+-   Snowflake schema is more normalized than Star schema but only in 1NF or 2NF
