@@ -37,7 +37,7 @@ Deployment strategies are a great topic, but have very little to do with data mo
 
 In general, the size of your data and your data model can affect your deployment strategies. You need to think about how to create a cluster, how many nodes should be in that cluster, how to do the actual installation. More information about deployment strategies can be found on this  [DataStax documentation page](https://docs.datastax.com/en/dse-planning/doc/planning/capacityPlanning.html)
 
-### Cassandra Architecture
+## Apache Cassandra Architecture
 
 We are not going into a lot of details about the Apache Cassandra Architecture. However, if you would like to learn more about it for your job, here are some links that you may find useful.
 
@@ -51,7 +51,7 @@ The following link will go more in-depth about the Apache Cassandra Data Model, 
 -   [Cassandra Documentation](https://docs.datastax.com/en/cassandra/3.0/cassandra/dml/dmlIntro.html)
 
 
-## CAP Theorem
+### CAP Theorem
 
 ### CAP Theorem:
 > A theorem in computer science that states it is <u>impossible</u> for a distributed data store to <u>simultaneously provide</u> more than two out of the following three guarantees of consistency, availability, and partition tolerance.
@@ -84,3 +84,31 @@ According to the CAP theorem, a database can actually only guarantee two out of 
 
 4. **If Apache Cassandra is not built for consistency, won't the analytics pipeline break?**  
 If I am trying to do analysis, such as determining a trend over time, e.g., how many friends does John have on Twitter, and if you have one less person counted because of "eventual consistency" (the data may not be up-to-date in all locations), that's OK. In theory, that can be an issue but only if you are not constantly updating. If the pipeline pulls data from one node and it has not been updated, then you won't get it. Remember, in Apache Cassandra it is about  **Eventual Consistency**.
+
+
+### Data Modeling in Apache Cassandra:
+
+-   Denormalization is not just okay -- **it's a must**
+-   Denormalization must be done for fast reads
+-   Apache Cassandra has been optimized for fast writes
+-   **ALWAYS think Queries first**
+-   **One table per query is a great strategy**
+-  Apache Cassandra does  **not**  allow for JOINs between tables
+
+### Commonly Asked Questions:
+
+1. **I see certain downsides of this approach, since in a production application, requirements change quickly and I may need to improve my queries later. Isn't that a downside of Apache Cassandra?**  
+    In Apache Cassandra, you want to model your data to your queries, and if your business need calls for quickly changing requirements, you need to create a new table to process the data. That is a requirement of Apache Cassandra. If your business needs calls for ad-hoc queries, these are not a strength of Apache Cassandra. However keep in mind that it is easy to create a new table that will fit your new query.
+
+
+
+![In Apache Cassandra, queries can only access data from one table](https://video.udacity-data.com/topher/2021/August/612ea2b6_use-this-version-data-modeling-lesson-3-1/use-this-version-data-modeling-lesson-3-1.png)
+
+#### Cassandra Query Language
+
+Cassandra query language is the way to interact with the database and is very similar to SQL. The following are  **not**  supported by CQL
+
+-   JOINS
+-   GROUP BY
+-   Subqueries
+
