@@ -8,4 +8,59 @@ The data warehouse plays a crucial role in the modern enterprise, storing and se
 
 A data warehouse is a system including processes, technologies & data representations that enables us to support analytical processes.
 
-In this course, you'll learn about the purpose of a data warehouse and some techniques and technologies used to build them. By the end of the course, you'll learn how to build a data warehouse solution in the cloud.
+### Operational vs Analytical Business Processes
+
+**Operational processes:**  Make it work.
+
+-   Find goods & make orders (for customers)
+-   Stock and find goods (for inventory staff)
+-   Pick up & deliver goods (for delivery staff)
+
+**Analytical processes:**  What is going on?
+
+-   Assess the performance of sales staff (for HR)
+-   See the effect of different sales channels (for marketing)
+-   Monitor sales growth (for management)
+
+![Data Warehouse is a system that enables us to support analytical processes](https://video.udacity-data.com/topher/2021/August/6111bc21_l1-introduction-to-datawarehousing/l1-introduction-to-datawarehousing.png)
+
+Data Warehouse is a system that enables us to support analytical processes
+
+## Data Warehouse Architecture
+
+> A data warehouse is a copy of transaction data specifically structured for query and analysis. -  _Kimball_
+
+> A data warehouse is a subject-oriented, integrated, nonvolatile, and time-variant collection of data in support of management's decisions. -  _Inmon_
+
+> A data warehouse is a system that retrieves and consolidates data periodically from the source systems into a dimensional or normalized data store. It usually keeps years of history and is queried for business intelligence or other analytical activities. It is typically updated in batches, not every time a transaction happens in the source system. -  _Rainard_
+
+
+### Data Warehouse: Technical Perspective
+
+Extract the data from the source systems used for operations, transform the data, and load it into a dimensional model
+
+![Kimball's Bus architecture](https://video.udacity-data.com/topher/2021/August/6112ddd2_l1-introduction-to-datawarehousing-3/l1-introduction-to-datawarehousing-3.png)
+
+Kimball's Bus architecture
+
+![The dimensional model of a data warehouse makes it easy for business users to work with the data and improves analytical query performance](https://video.udacity-data.com/topher/2021/August/6111d21c_l1-introduction-to-datawarehousing-1/l1-introduction-to-datawarehousing-1.png)
+
+The Dimensional Model of a Data Warehouse
+
+Business-user-facing application are needed, with clear visuals - Business Intelligence (BI) apps
+
+### ETL: A Closer Look
+
+Extracting:
+
+-   Transfer data to the warehouse
+
+Transforming:
+
+-   Integrates many sources together
+-   Possibly cleansing: inconsistencies, duplication, missing values, etc..
+-   Possibly producing diagnostic metadata
+
+Loading:
+
+-   Structuring and loading the data into the dimensional data model
