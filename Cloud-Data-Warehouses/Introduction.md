@@ -64,3 +64,61 @@ Transforming:
 Loading:
 
 -   Structuring and loading the data into the dimensional data model
+
+
+### Dimensional Model Review
+
+**Goals of the Star Schema**
+
+-   Easy to understand
+-   Fast analytical query performance
+
+**Fact Tables**
+
+-   Record business events, like an order, a phone call, a book review
+-   Fact tables columns record events recorded in quantifiable metrics like quantity of an item, duration of a call, a book rating
+
+**Dimension Tables**
+
+-   Record the context of the business events, e.g. who, what, where, why, etc..
+-   Dimension tables columns contain attributes like the store at which an item is purchased or the customer who made the call, etc.
+
+  
+
+### ETL: A Closer Look
+
+**Extracting:**
+
+-   Transfer data to the warehouse
+
+**Transforming:**
+
+-   Integrates many sources together
+-   Possibly cleansing: inconsistencies, duplication, missing values, etc..
+-   Possibly producing diagnostic metadata
+
+**Loading:**
+
+-   Structuring and loading the data into the dimensional data model
+
+### Example: The DVD Rentals Sample Database
+
+![The Star Schema is easier for business users to understand versus Third Normal Form Schema ](https://video.udacity-data.com/topher/2021/August/6111d490_l1-introduction-to-datawarehousing-2/l1-introduction-to-datawarehousing-2.png)
+
+Third Normal Form Schema VS Star Schema
+
+### Naive Extract Transform and Load (ETL): From Third Normal Form to ETL
+
+**Extract**
+
+-   Query the 3NF DB
+
+**Transform**
+
+-   Join tables together
+-   Change types
+-   Add new columns
+
+**Load**
+
+-   Insert into facts & dimension tables
