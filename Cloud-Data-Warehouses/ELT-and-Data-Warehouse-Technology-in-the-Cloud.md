@@ -1,0 +1,34 @@
+# ELT and Data Warehouse Technology in the Cloud
+
+Data warehouses have been around for a long time but recently they have received significant attention in the data industry in relation to cloud computing. With traditional, on-premise data warehouses, an organization needed to buy physical hardware to fit the pre-defined need. Modern cloud infrastructures allow data warehouses to be scaled on-demand in response to changing needs.
+
+This ability to scale means modern cloud infrastructures can take full advantage of  **massively parallel processing**  in a changing data environment. When you run a data warehouse in the cloud, you should design for this flexible scaling and think carefully about data ingestion if your transactional systems reside on-premise.
+
+Some of the key benefits of moving to cloud data warehouses from on-premise include:
+
+-   **Scalability:** This means large amounts of data can be loaded into the data warehouse environment, processed, and stored faster and with relative ease
+-   **Flexibility:** This comes from the ability to add and remove different types of resources from data pipelines as needed. This allows for flexibility in the process as business needs change.
+- **Cost shifting:**  A result of leveraging cloud database technology to perform the costly and time-consuming transformation of data as the last part of the process rather than doing it earlier as is typical with on-premise data warehouses. By pushing it later, the business can prioritize which transforms they want to complete “just in time” for the business.
+
+## From ETL to ELT
+
+### ELT in Cloud Environments
+
+Massive parallel processing and distributed file storage capabilities of cloud computing have led to new extract, transform, and load design patterns. Traditional ETL models have worked for decades but the introduction of massive scalability through cloud data warehousing has allowed us to flip the Transform and Load steps.
+
+### ELT originated from ETL
+
+The letters mean the same thing but the order is different in an important way. Since the T and L are swapped from TL to LT, this means the most significant difference between ETL and ELT is “Where does the transformation happen?”
+
+-   ETL: happens on an intermediate server
+-   ELT: happens on the destination server
+
+This means rather than loading data directly into the final format of the destination data warehouse, data are loaded into the destination as either raw data or staging tables (or sometimes both). Only after loading is transformation performed.
+
+The benefits of doing ELT include:
+
+-   Scalability - massive amounts of data can be loaded into the data warehouse environment with relative ease
+-   Flexibility - the Transform step takes place using the same tech stack as the data warehouse runs on allowing for more flexibility in the process as business needs change.
+-   Cost shifting - the Transform step is often the most costly and by doing it last, Data Engineers can perform Just In Time transformations to meet the highest priority business needs first
+-   Better performance for large datasets
+-   More flexibility for unstructured (NoSQL) datasets
