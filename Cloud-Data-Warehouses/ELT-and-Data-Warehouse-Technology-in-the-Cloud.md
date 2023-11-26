@@ -32,3 +32,27 @@ The benefits of doing ELT include:
 -   Cost shifting - the Transform step is often the most costly and by doing it last, Data Engineers can perform Just In Time transformations to meet the highest priority business needs first
 -   Better performance for large datasets
 -   More flexibility for unstructured (NoSQL) datasets
+
+
+## Cloud Managed SQL Storage
+
+Data Warehouses in the cloud leverage many of the same SQL style, relational databases that are used for OLTP systems.
+
+-   Oracle
+-   Microsoft SQL Server
+-   PostgreSQL
+-   MySQL
+-   MariaDB
+
+The major cloud providers provide all of these databases as managed databases meaning the user doesn't have to manage the hardware resources to gain optimal performance.
+
+-   Microsoft Azure
+    -   Azure SQL Database (MS SQL Server)
+    -   Azure Database for MySQL
+    -   Azure Database for MariaDB
+    -   Azure Database for PostgreSQL
+-   GCP
+    -   Cloud SQL (MySQL, PostgreSQL, and MS SQL Server)
+-   AWS
+    -   Amazon RDS (MySQL, PostgreSQL, MariaDB, Oracle, MS SQL Server)
+ 
