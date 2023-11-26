@@ -55,4 +55,63 @@ The major cloud providers provide all of these databases as managed databases me
     -   Cloud SQL (MySQL, PostgreSQL, and MS SQL Server)
 -   AWS
     -   Amazon RDS (MySQL, PostgreSQL, MariaDB, Oracle, MS SQL Server)
- 
+
+## Database Management Systems
+
+ELT makes it easier to use many NoSQL database management systems in Data Warehousing scenarios. These database come in many flavors such as:
+
+-   Key value
+-   Document
+-   Column oriented
+-   Graph
+-   Time series
+
+Each of the major cloud providers offers a variety of managed NoSQL databases:
+
+-   Azure - CosmosDB
+    -   Gremlin - graph database
+    -   MongoDB - document
+    -   Cassandra - column oriented
+-   GCP
+    -   Big Table - column oriented
+    -   Firestore - document
+    -   MongoDB Atlas - document
+-   AWS
+    -   DynamoDB - Key value
+    -   DocumentDB - document
+    -   Keyspaces = column oriented
+    -   Neptune - graph
+    -   Time stream - time series
+
+## Cloud ETL Pipeline Services
+ETL / ELT processes rely on data pipelines often built using cloud-based tools.
+
+Major Cloud providers
+
+-   Azure Data Factory
+-   AWS Glue
+-   GCP Dataflow
+
+In addition to these tools, a large number of companies offer cloud-based tools for solving ETL / ELT challenges. Some of the major tool providers in this space are:
+
+-   Informatica
+-   Talend
+-   Xplenty
+-   Matillion
+
+One advantage of doing ELT over ETL is the ability to load large amounts of data quickly. One excellent example of this is ingesting streaming data. In modern architectures, this streaming data is often coming from Internet of Things (IoT) devices; however, it could be coming from more traditional sources such as server or transaction logs.
+
+Each of the major cloud platforms has offering for ingesting large amounts of streaming data:
+
+-   Azure - Streaming Analytics
+-   AWS - Kinesis
+-   GCP - Dataflow
+
+## Cloud Data Warehouse Solutions
+
+The last piece of the puzzle for Cloud Data Warehousing is the data warehouse itself. Modern cloud data warehouse solutions seamlessly combine elements from Cloud Storage and Cloud Pipelines with powerful analytics capabilities. Each of the three major cloud providers has its own flavor of Cloud Data Warehouse that works seamlessly with its other cloud data engineering offerings.
+
+-   Azure Synapse
+-   Amazon Redshift
+-   GCP Big Query
+
