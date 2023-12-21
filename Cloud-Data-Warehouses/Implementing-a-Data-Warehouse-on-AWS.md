@@ -46,3 +46,62 @@ You can also choose storage optimised nodes. These nodes are not as fast or powe
 
 -   Each compute node is logically divided into a number of slices
 -   A cluster with n slices can process n partitions of tables simultaneously
+
+
+
+## Ingesting Data at Scale
+
+We can use SQL queries to select data out of a database. But what do we do if we want to copy the results to another table on a totally different database server like Redshift? We want to move the data from here to there. 
+
+One way to approach SQL to SQL ETL is to put an ETL server between the source database and the destination data warehouse. We can use SQL statements to get the data. The data is written to CSVs in the local storage or network-attached storage of that ETL server, and you would insert or copy the data to the data warehouse.
+
+![Data Warehouse ETL](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/c484f32f02ab4808d5908823c4777890278c382d/Images/data-warehouse-ETL.jpg)
+
+On the AWS platform, we could use EC2 instances as ETL servers. But there is an even better way to take advantage of the AWS platform. <u> S3 distributed storage buckets can be used as a staging area for data to be loaded into Redshift</u>. Most of the products on the AWS platform, especially the managed service products, are able to communicate with S3 storage. You can extract data from multiple data sources within ETL server into S3 as a staging area, using SQL to transform it and load it into Redshift.
+
+![Redshift SQL to SQL ETL](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/c484f32f02ab4808d5908823c4777890278c382d/Images/redshift-sql-to-sql-ETL.jpg)
+
+Let's review a typical solution architecture. 
+- **Sources:** We might have a diverse number of data sources like CSV files, managed and unmanaged relational data stores like Cassandra or DynamoDB. There could also be EC2 machines. 
+- **ETL:**  Then, we would have our ETL servers, a class of products that communicate with all the data sources. 
+- **Data Warehouse:** ETL server scripts and products issue commands to extract data from the sources and into S3 staging, as well as pulling the data into Redshift.
+- **OLAP Cubes:** Once the data is loaded into Redshift, we are able to connect business intelligence apps and visualizations to it. Data cubes containing pre-aggregated data can also be materialized into Amazon S3.
+- **BI Apps:** BI apps can work directly from Redshift or faster from these pre-aggregated OLAP cubes.
+
+![Redshift Architecture and Dataflow](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/c484f32f02ab4808d5908823c4777890278c382d/Images/redshift-architecture-and-dataflow.jpg)
+
+### Transferring Data from an S3 Staging Area to Redshift
+
+Use the ``COPY`` Command:
+
+- Inserting data row by using ``INSERT`` will be very slow
+- Performs a bulk upload of data
+
+If the file is large:
+
+-   It is better to break it up into multiple files
+-   Ingest in Parallel. How?
+	- The files have a common prefix
+	- Using a Manifest file
+- Use compression from the beginning in ``gzip`` format
+
+Other considerations:
+
+-   Better to ingest from the same AWS region
+-   Better to compress all the CSV files
+
+Let's take a look at an example of using a common prefix with a copy command. Will copy to a target table in Redshift from a particular S3 bucket. Here, we have an S3 bucket and a key that consists of a path, and at the end you have a part. This part is not a file. 
+
+If you look at the structure of this ticket's split key, it consists of 10 files, and these 10 files have a common prefix.
+
+Redshift will parallelize the processing of the data based on the prefix. It will spin up a number of workers, and these compute nodes can adjust the file into Redshift in parallel.
+
+Redshift is initiating a connection to S3 to fetch the data, so you'll need credentials to be able to access Amazon S3 from Redshift.
+
+You can declare the use of gzip as well as accustomed delimiter, in this case, a semicolon and the AWS region in which the data is stored.
+![Ingesting with Prefix](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/c484f32f02ab4808d5908823c4777890278c382d/Images/ingesting-with-prefix.jpg)
+
+If you do not want to depend on a prefix and you want to be more explicit, you can use a manifest method to copy into a table with the copy command.
+![Ingesting with Manifest](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/c484f32f02ab4808d5908823c4777890278c382d/Images/ingesting-with-manifest.jpg)
+
+
