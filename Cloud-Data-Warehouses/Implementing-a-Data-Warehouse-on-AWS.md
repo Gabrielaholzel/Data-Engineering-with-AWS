@@ -121,7 +121,9 @@ The two possible strategies are:
 2. **Sorting keys**
 
 ### Distribution Styles
+
 **EVEN Distribution**
+
 Let's start with <u>Even Distribution</u>. Let's say we have a table containing 1,000 rows. It has a primary key and a reference to a dimension which is a store, dim store in this example. We start copying this into a table, and to Redshift, we are copying the file in parallel, and Redshift will load balance the amounts of data being copied.
 
 Ideally, if there are 1,000 rows, we would want 250 rows on each slice of compute using an even or round-robin distribution style. Each server is given the same amount of rows and that evens out the load.
@@ -129,6 +131,7 @@ Ideally, if there are 1,000 rows, we would want 250 rows on each slice of comput
 ![EVEN Distribution](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/even-distribution.jpg)
 
 **ALL Distribution**
+
 Let's look at an example where we have a smaller table with only 40 rows. That is a dimension table for the stores. When we copy the table, what is going to happen if we join the facts and the dimension to get the store information itself, which is either New York or California? It would be optimal if all the foreign keys resided on the same machine. Imagine tables with thousands or millions of rows. The distribution of all these keys is called **shuffling**. When we join a table using an even strategy, we do lots of shuffling.
 
 ![ALL Distribution](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/all-distribution.jpg)
@@ -141,9 +144,11 @@ Using the previous example, the Fact Sales tables are still distributed using th
 
 
 **AUTO Distribution**
+
 A third distribution style is called <u>AUTO Distribution</u>. Auto distribution leaves the decision to Redshift. Small tables are distributed with an all-strategy. Redshift does the calculations to determine which small tables are optimal to broadcast. Large tables are distributed using an even strategy. 
 
 **KEY Distribution**
+
 The last distribution style we'll cover is the <u>KEY Distribution</u> strategy. In this distribution, rows having similar values are placed in the same slice. In this example, a fact table is distributed on the dim store key. Keys are grouped on partitions, which can sometimes lead to a skewed distribution if some values of the key are more frequent than others. 
 
 ![KEY Distribution](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/key-distribution.jpg)
@@ -154,6 +159,7 @@ Here's what the SQL syntax looks for for declaring a distribution key on a fact 
 
 
 ### Sorting Keys
+
 Another distribution optimization is using sorting keys. You can define a column as a sort key. If you choose one column to be a sort key, when data's copied, rows are sorted before distribution to slices. This minimizes query time since each node already has contiguous ranges of rows based on the sorting keys. It is useful for columns that are frequently used in order by queries which are typically found in fact tables.
 
 ![Sorting Keys](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/sorting-distribution.jpg)
