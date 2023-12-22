@@ -105,3 +105,59 @@ If you do not want to depend on a prefix and you want to be more explicit, you c
 ![Ingesting with Manifest](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/c484f32f02ab4808d5908823c4777890278c382d/Images/ingesting-with-manifest.jpg)
 
 
+
+## Optimizing Table Design with Distribution Styles
+
+We want to optimize the design of our tables where we ingest data in order to speed up queries.
+
+Big tables are partitioned into smaller partitions so that we can access them in parallel and parallelize them in slices. If you have information about the frequent access pattern of a table, you can choose a more optimized strategy.
+
+The two possible strategies are:
+1. **Distribution style:** 
+	- EVEN distribution
+	- ALL distribution
+	- AUTO distribution
+	- KEY distribution
+2. **Sorting keys**
+
+### Distribution Styles
+**EVEN Distribution**
+Let's start with <u>Even Distribution</u>. Let's say we have a table containing 1,000 rows. It has a primary key and a reference to a dimension which is a store, dim store in this example. We start copying this into a table, and to Redshift, we are copying the file in parallel, and Redshift will load balance the amounts of data being copied.
+
+Ideally, if there are 1,000 rows, we would want 250 rows on each slice of compute using an even or round-robin distribution style. Each server is given the same amount of rows and that evens out the load.
+
+![EVEN Distribution](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/even-distribution.jpg)
+
+**ALL Distribution**
+Let's look at an example where we have a smaller table with only 40 rows. That is a dimension table for the stores. When we copy the table, what is going to happen if we join the facts and the dimension to get the store information itself, which is either New York or California? It would be optimal if all the foreign keys resided on the same machine. Imagine tables with thousands or millions of rows. The distribution of all these keys is called **shuffling**. When we join a table using an even strategy, we do lots of shuffling.
+
+![ALL Distribution](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/all-distribution.jpg)
+
+There are distribution styles to optimize the shuffling. In the distribution style, small tables are replicated on all slices to speed up joins. In general, there are not a lot of rows and dimensional tables compared to fact tables. The all-distribution style is also known as **broadcasting** because it broadcasts the replicated table across the cluster.
+
+Using the previous example, the Fact Sales tables are still distributed using the even strategy, but the store dimension is replicated using the all strategy. Using the all-distribution style for the store dimension minimizes traversing and shuffling.
+
+![Distributing Facts with EVEN and Dimensions with ALL](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/distributing-facts-dimensions.jpg)
+
+
+**AUTO Distribution**
+A third distribution style is called <u>AUTO Distribution</u>. Auto distribution leaves the decision to Redshift. Small tables are distributed with an all-strategy. Redshift does the calculations to determine which small tables are optimal to broadcast. Large tables are distributed using an even strategy. 
+
+**KEY Distribution**
+The last distribution style we'll cover is the <u>KEY Distribution</u> strategy. In this distribution, rows having similar values are placed in the same slice. In this example, a fact table is distributed on the dim store key. Keys are grouped on partitions, which can sometimes lead to a skewed distribution if some values of the key are more frequent than others. 
+
+![KEY Distribution](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/key-distribution.jpg)
+
+Here's what the SQL syntax looks for for declaring a distribution key on a fact table and dimension table. After the not null, we declare a distribution key used to join the tables. 
+
+![KEY Distribution SQL](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/key-distribution-sql.jpg)
+
+
+### Sorting Keys
+Another distribution optimization is using sorting keys. You can define a column as a sort key. If you choose one column to be a sort key, when data's copied, rows are sorted before distribution to slices. This minimizes query time since each node already has contiguous ranges of rows based on the sorting keys. It is useful for columns that are frequently used in order by queries which are typically found in fact tables.
+
+![Sorting Keys](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/sorting-distribution.jpg)
+
+A column can be both a distribution key and a sort key. If you order by a field a lot, you might want to mark it as a sort key. Here's what the syntax looks like in SQL. In this example, the order date is marked as a sort key. The primary key of the dimensions table could be a sort key and a distribution key. 
+
+![Sorting Keys SQL](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/f7965206808be904e5e7233d3fbf85ee0b482282/Images/sorting-distribution-sql.jpg)
