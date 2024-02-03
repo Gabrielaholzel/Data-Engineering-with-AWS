@@ -61,8 +61,8 @@ DISTSTYLE KEY;
 """)
 
 songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplay (
-    songplay_id         INT         IDENTITY(0,1)   PRIMARY KEY,
-    start_time          TIMESTAMP   NOT NULL,
+    songplay_id         INT         IDENTITY(0,1)   PRIMARY KEY    DISTKEY,
+    start_time          TIMESTAMP   NOT NULL                       SORTKEY,
     user_id             VARCHAR     NOT NULL,
     level               VARCHAR,
     song_id             VARCHAR     NOT NULL,
@@ -74,7 +74,7 @@ songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplay (
 """)
 
 user_table_create = ("""CREATE TABLE IF NOT EXISTS users (
-    user_id             VARCHAR     PRIMARY KEY,
+    user_id             VARCHAR     PRIMARY KEY        SORTKEY,
     first_name          VARCHAR     NOT NULL,
     last_name           VARCHAR     NOT NULL,
     gender              CHAR(1),
@@ -83,7 +83,7 @@ user_table_create = ("""CREATE TABLE IF NOT EXISTS users (
 """)
 
 song_table_create = ("""CREATE TABLE IF NOT EXISTS song (
-    song_id             VARCHAR     PRIMARY KEY,
+    song_id             VARCHAR     PRIMARY KEY        SORTKEY,
     title               VARCHAR     NOT NULL,
     artist_id           VARCHAR     NOT NULL,
     year                INT,
@@ -92,7 +92,7 @@ song_table_create = ("""CREATE TABLE IF NOT EXISTS song (
 """)
 
 artist_table_create = ("""CREATE TABLE IF NOT EXISTS artist (
-    artist_id           VARCHAR     PRIMARY KEY,
+    artist_id           VARCHAR     PRIMARY KEY        SORTKEY,
     name                VARCHAR     NOT NULL,
     location            TEXT,
     latitude            FLOAT,
@@ -101,7 +101,7 @@ artist_table_create = ("""CREATE TABLE IF NOT EXISTS artist (
 """)
 
 time_table_create = ("""CREATE TABLE IF NOT EXISTS time (
-    start_time          TIMESTAMP   PRIMARY KEY,
+    start_time          TIMESTAMP   PRIMARY KEY        SORTKEY,
     hour                INT,
     day                 INT,
     week                INT,
