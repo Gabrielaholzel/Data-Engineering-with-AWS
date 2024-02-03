@@ -31,7 +31,7 @@ To set up the project, follow these steps:
 
 2. **Configure AWS Credentials**:
 
-Ensure your AWS credentials are correctly set up in the .aws folder.
+Ensure your AWS credentials are correctly set up in the `dwh.cfg` file.
 
 3. **Run the ETL Pipeline:**
    ```bash
