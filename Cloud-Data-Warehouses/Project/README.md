@@ -83,4 +83,68 @@ Ensure your AWS credentials are correctly set up in the .aws folder.
 
 The database schema is as follows:
 
-![Database Schema](Cloud-Data-Warehouses/Project/database-schema.jpg)
+![Database Schema](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/05f1f8e6bf124f30d2c2655fc55dde1095b37f19/Cloud-Data-Warehouses/Project/database-schema.jpg)
+
+
+
+## Example Queries
+Here are some example queries to gain insights into the Sparkify dataset:
+
+1. Find the most popular songs
+   ```sql
+   SELECT s.title, COUNT(sp.songplay_id) AS play_count
+   FROM songplay sp
+      JOIN song s ON sp.song_id = s.song_id
+   GROUP BY s.title
+   ORDER BY play_count DESC
+   LIMIT 10;
+
+2. Explore user activity during different times of the day
+   ```sql
+   SELECT t.hour, COUNT(sp.songplay_id) AS play_count
+   FROM songplay sp
+   JOIN time t ON sp.start_time = t.start_time
+   GROUP BY t.hour
+   ORDER BY t.hour;
+   
+3. Identify the top users by the number of song plays
+   ```sql
+   SELECT u.user_id, u.first_name, u.last_name, COUNT(sp.songplay_id) AS play_count
+   FROM songplay sp
+   JOIN users u ON sp.user_id = u.user_id
+   GROUP BY u.user_id, u.first_name, u.last_name
+   ORDER BY play_count DESC
+   LIMIT 10;
+
+
+4. Discover the distribution of user levels
+   ```sql
+   SELECT level, COUNT(DISTINCT user_id) AS user_count
+   FROM users
+   GROUP BY level;
+
+5. Find the most active locations
+   ```sql
+   SELECT location, COUNT(songplay_id) AS play_count
+   FROM songplay
+   GROUP BY location
+   ORDER BY play_count DESC
+   LIMIT 10;
+
+6. Explore the most played songs in a specific month
+   ```sql
+   SELECT s.title, COUNT(sp.songplay_id) AS play_count
+   FROM songplay sp
+   JOIN song s ON sp.song_id = s.song_id
+   JOIN time t ON sp.start_time = t.start_time
+   WHERE t.month = 11 -- Replace with the desired month
+   GROUP BY s.title
+   ORDER BY play_count DESC
+   LIMIT 10;
+
+## Helpful Hints
+* **Security Considerations**: Be mindful of security concerns related to AWS credentials, roles, and regions.
+* **AWS Account:** Udacity provides a temporary AWS account, but you can use your own AWS account if needed.
+
+## Acknowledgements
+This project is part of the Data Engineering Nanodegree at [Udacity](https://www.udacity.com/).
