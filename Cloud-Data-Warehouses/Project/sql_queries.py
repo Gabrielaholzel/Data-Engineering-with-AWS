@@ -35,17 +35,18 @@ staging_events_table_create= ("""CREATE TABLE IF NOT EXISTS staging_events (
     method          VARCHAR,
     page            VARCHAR,
     registration    FLOAT,
-    sessionId       INT,
+    sessionId       INT DISTKEY,
     song            VARCHAR,
     status          INT,
-    ts              BIGINT,
+    ts              BIGINT SORTKEY,
     userAgent       TEXT,
     userId          INT
-);
+)
+DISTSTYLE KEY;
 """)
 
 staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS staging_songs (
-    artist_id           VARCHAR,
+    artist_id           VARCHAR DISTKEY,
     artist_latitude     FLOAT,
     artist_location     TEXT,
     artist_longitude    FLOAT,
@@ -54,8 +55,9 @@ staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS staging_songs (
     num_songs           INT,
     song_id             VARCHAR,
     title               VARCHAR,
-    year                INT
-);
+    year                INT SORTKEY
+)
+DISTSTYLE KEY;
 """)
 
 songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplay (
