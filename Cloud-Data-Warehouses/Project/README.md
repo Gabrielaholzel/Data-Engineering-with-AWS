@@ -83,4 +83,4 @@ Ensure your AWS credentials are correctly set up in the .aws folder.
 
 The database schema is as follows:
 
-
+![Database Schema](Cloud-Data-Warehouses/Project/database-schema.jpg)
