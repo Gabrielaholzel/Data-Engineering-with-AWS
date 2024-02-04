@@ -60,6 +60,17 @@ def read_config(file_path='dwh.cfg' : str):
     return config['CLUSTER'].values()
 
 def main():
+    """
+    Reads configuration parameters from config file. 
+    Executes load_staging_tables for loading staging tables from S3 files.
+    Executes insert_tables to insert staging data into tables in DB.
+
+    Args:
+    None
+
+    Returns:
+    None
+    """
     host, dbname, user, password, port = read_config()
     with psycopg2.connect(f"host={host} dbname={dbname} user={user} password={password} port={port}") as conn:
         with conn.cursor() as cur:
