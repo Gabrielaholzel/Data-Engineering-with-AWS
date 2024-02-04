@@ -3,6 +3,7 @@ import psycopg2
 from psycopg2 import Error
 from psycopg2.extensions import cursor, connection
 from sql_queries import copy_table_queries, insert_table_queries
+from typing import ValuesView
 
 
 def load_staging_tables(cur: cursor, conn: connection) -> None:
@@ -71,7 +72,7 @@ def validate_queries(cur: cursor) -> None:
         conn.rollback()
     
 
-def read_config(file_path='dwh.cfg' : str):
+def read_config(file_path: str = 'dwh.cfg') -> ValuesView:
     """
     Reads configuration file.
 
@@ -79,8 +80,7 @@ def read_config(file_path='dwh.cfg' : str):
     file_path: String path to the configuration file.
 
     Returns:
-    config['CLUSTER'].values(): String elements of the config['CLUSTER'] dict. 
-        They are strings for: host, database name, user, password and port.
+    config['CLUSTER'].values(): dict_values object containing the following: host, database name, user, password and port.
     """
     config = configparser.ConfigParser()
     config.read(file_path)
