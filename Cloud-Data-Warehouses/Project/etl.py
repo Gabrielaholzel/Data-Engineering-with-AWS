@@ -76,6 +76,9 @@ def main():
         with conn.cursor() as cur:
             load_staging_tables(cur, conn)
             insert_tables(cur, conn)
+            cur.execute("VACUUM;") # Re-sorts rows and reclaims space in either a specified table or all tables in the current database.
+            cur.execute("ANALYZE;") # Updates table statistics for use by the query planner.
+            conn.commit()
 
 if __name__ == "__main__":
     main()
