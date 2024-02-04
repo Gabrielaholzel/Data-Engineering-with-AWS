@@ -36,22 +36,27 @@ def insert_tables(cur: cursor, conn: connection) -> None:
         cur.execute(query)
         conn.commit()
 
+def read_config(file_path='dwh.cfg' : str):
+    """
+    Reads configuration file.
+
+    Args:
+    file_path: String path to the configuration file.
+
+    Returns:
+    config['CLUSTER'].values(): String elements of the config['CLUSTER'] dict. 
+        They are strings for: host, database name, user, password and port.
+    """
+    config = configparser.ConfigParser()
+    config.read(file_path)
+    return config['CLUSTER'].values()
 
 def main():
-    try:
-        config = configparser.ConfigParser()
-        config.read('dwh.cfg')
-    
-        conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(*config['CLUSTER'].values()))
-        cur = conn.cursor()
-        
-        load_staging_tables(cur, conn)
-        insert_tables(cur, conn)
-    
-        conn.close()
-    except Error as e:
-        print(f"Error: {e}")
-
+    host, dbname, user, password, port = read_config()
+    with psycopg2.connect(f"host={host} dbname={dbname} user={user} password={password} port={port}") as conn:
+        with conn.cursor() as cur:
+            load_staging_tables(cur, conn)
+            insert_tables(cur, conn)
 
 if __name__ == "__main__":
     main()
