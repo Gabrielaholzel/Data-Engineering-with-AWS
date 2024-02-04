@@ -17,8 +17,12 @@ def load_staging_tables(cur: cursor, conn: connection) -> None:
     None
     """
     for query in copy_table_queries:
-        cur.execute(query)
-        conn.commit()
+        try:
+            cur.execute(query)
+            conn.commit()
+        except Exception as e:
+            print(f"Error executing query: {e}")
+            conn.rollback()
 
 
 def insert_tables(cur: cursor, conn: connection) -> None:
@@ -33,8 +37,12 @@ def insert_tables(cur: cursor, conn: connection) -> None:
     None
     """
     for query in insert_table_queries:
-        cur.execute(query)
-        conn.commit()
+        try:
+            cur.execute(query)
+            conn.commit()
+        except Exception as e:
+            print(f"Error executing query: {e}")
+            conn.rollback()
 
 def read_config(file_path='dwh.cfg' : str):
     """
