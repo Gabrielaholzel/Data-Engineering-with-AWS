@@ -43,6 +43,33 @@ def insert_tables(cur: cursor, conn: connection) -> None:
         except Exception as e:
             print(f"Error executing query: {e}")
             conn.rollback()
+            
+def validate_queries(cur: cursor) -> None:
+    """
+    Validates that the tables have been correctly loaded.
+
+    Args:
+    cur: Cursor object for the database connection.
+
+    Returns:
+    None
+    """
+    try:
+        print("The number of records in the songplays table is: ")
+        sp_count = cur.execute("SELECT COUNT(*) FROM songplays;")
+        sp_count.fetchone()
+        
+        print("The duplicate records in the songplays table are: ")
+        dup_records = cur.execute("SELECT COUNT(*), start_time, user_id, song_id, artist_id \
+                                   FROM songplays \
+                                   GROUP BY start_time, user_id, song_id, artist_id \
+                                   HAVING COUNT(*) > 1;")
+        sp_count.fetchall()
+    
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        conn.rollback()
+    
 
 def read_config(file_path='dwh.cfg' : str):
     """
@@ -76,6 +103,7 @@ def main():
         with conn.cursor() as cur:
             load_staging_tables(cur, conn)
             insert_tables(cur, conn)
+            validate_queries(cur)
 
 if __name__ == "__main__":
     main()
