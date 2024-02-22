@@ -93,9 +93,6 @@ One of the most common functions in Spark is  `map`. It simply makes a copy of t
 #### Convert a List of Strings to Lowercase
 
 Let's walk through an example where the data is a list of thousands of strings of song titles:
-```python
-
-```
 
 ```python
 "Despacito", 
