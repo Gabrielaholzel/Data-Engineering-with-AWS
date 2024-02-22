@@ -1,200 +1,212 @@
+# The Spark DAG: Teamwork for Data Processing
 
-# Data Engineering with AWS
+### The Spark DAG
 
-Welcome!
+Apache Spark distributes data processing tasks over a cluster of distributed computing resources. How does it accomplish this?
 
-This repo is meant to be used as a notes bank for the [Data Engineering with AWS](https://www.udacity.com/course/data-engineer-nanodegree--nd027) nanodegree program by [Udacity](https://learn.udacity.com/).
+#### Cycling Team
 
----
-## Introduction to Data Modeling
----
-### What is Data Modeling?
-> "... an abstraction that **organizes elements of data** and **how** they will **relate** to each other" -- Wikipedia
+Imagine a team of road cyclists, who share their water with each other to reduce the load of the person cycling in the front. Each time the lead cyclist rotates to the back, they take the duty of carrying the new lead cyclist's water. This works great,  _until they become separated_.
 
-> "Data modeling is the **process of creating a visual representation** or a blueprint that defines the **information collection and management systems** of any organization. This blueprint or data model helps different stakeholders, like data analysts, scientists, and engineers, to create a unified view of the organization's data. The model **outlines what data the business collects, the relationship between different datasets, and the methods that will be used to store and analyze the data**." -- AWS
+If the lead cyclist is separated from their team, they won't have any water. For the lead cyclist to have adequate water, they must carry their  **own**  water. Similarly, in distributed systems, your program shouldn't rely on resources created by previous executions.
 
-> "Data modeling is the **process of creating a visual representation** of either a whole information system or parts of it **to communicate connections** between data points and structures." -- IBM
+An  **idempotent program**  can run multiple times without any effect on the result. Some programs depend on prior state in order to execute properly. This is not considered  **idempotent**, because they depend on that state existing before starting.
 
+```python
+## Example of relying on prior state  
+ledgerBalance = getLedgerBalanceFromLastRun()  
+ledgerBalance = ledgerBalance + getLedgerBalanceSinceLastRun()  
 
-Data modeling is a process to support both your business and your user applications. These two needs are particularly different. 
+## Example of avoiding prior state 
+ledgerBalance = addAllTransactions()
+```
+#### Dividing the Work
 
-For example, let's say we owned an online store. We will need to store data so that we can understand how much stock we sold of a particular item. This is a business process, and we'll also need to store information about our customers as they'd log onto our website, a user application. 
+One goal of  **idempotent code**  is that data can be processed in parallel, or simultaneously. This is done by calling the same code repeatedly in different threads, and on  **different nodes**  or servers for each chunk or block of data. If each program has no reliance on prior execution, there should be no problem splitting up processing.
 
-* **Process to Support Business and Users Applications**
-To begin a data modeling process, the team must gather requirements from the application team, the business users, and our end users to understand that data must be retained and served as a business or the end-users. 
+When writing Spark code, it is very important to avoid reading data into regular lists or arrays, because the amount of data your code deals with can be very large. Instead, you will use special datasets called  **Resilient Distributed Datasets (RDDs)**  and  **DataFrames**. Much like an SQL query cursor, they don't actually hold all of the data in memory.  _These datasets give your Spark job access to the shared resources of the cluster in a very controlled way, that is managed outside of your Spark job._
 
-* **Gather Requirements**
-First, we need to map out that our data must be stored and persisted, and how that data will relate to each other. Next, we want to focus on conceptual data modeling. 
+```python
+## Instead of doing something like this 
+textFile = open("invoices.txt", "r")  
 
-* **Conceptual Data Modeling**
-The process of doing actual data modeling, starts with conceptual data modeling with entity mapping. This can be done actually by hand, or by using many tools to do this work. Conceptual data modeling is mapping the concepts of the data that you have or will have. 
-According to [AWS](https://aws.amazon.com/what-is/data-modeling/), conceptual data models give a big picture view of data. They explain the following:
-	* What data the system contains
-	* Data attributes and conditions or constraints on the data
-	* What business rules the data relates to
-	* How the data is best organized
-	* Security and data integrity requirements
+## invoiceList could occupy Gigabytes of Memory  
+invoiceList = textFile.readlines()  
+print(invoiceList)  
 
+## Do something like this instead  
+invoiceDataFrame = spark.read.text("invoices.txt")
 
-* **Logical Data Modeling**
-Logical data modeling is done where the contectual models are mapped to logical models using the concept of tables, schemas, and columns. According to [AWS](https://aws.amazon.com/what-is/data-modeling/), they give more details about the data concepts and complex data relationships that were identified in the conceptual data model, such as these:
-	* Data types of the various attributes (for example, string or number)
-	* Relationships between the data entities
-	* Primary attributes or key fields in the data
+## Leverage Spark DataFrames to handle large datasets 
+invoiceDataFrame.show(n=10)
+```
 
-Data architects and analysts work together to create the logical model. They follow one of several formal data modeling systems to create the representation. Sometimes agile teams might choose to skip this step and move from conceptual to physical models directly. However, these models are useful for designing large databases, called data warehouses, and for designing automatic reporting systems.
+## Directed Acyclic Graph (DAG)
 
+Similar to how cyclists carry their own water, every Spark program makes a copy of its input data and never changes the original parent data. Because Spark doesn't change or mutate the input data, it's known as  **immutable**. But what happens when you have lots of function calls in your program?
 
+-   In Spark, you do this by chaining together multiple function calls that each accomplish a small chunk of the work.
+-   It may appear in your code that every step will run sequentially
+-   However, they may be run more efficiently if Spark finds a more optimal  **execution plan**
 
+Spark uses a programming concept called lazy evaluation. Before Spark does anything with the data in your program, it first builds step-by-step directions of what functions and data it will need.
 
-* **Physical Data Modeling**
-Physical data modeling is done transforming the logical data modeling to the database's *Data Definition Language*, or **DDL** to be able to create the databases, the tables and the schemas. According to [AWS](https://aws.amazon.com/what-is/data-modeling/), physical data models map the logical data models to a specific DBMS technology and use the software's terminology. For example, they give details about the following:
-	* Data field types as represented in the DBMS
-	* Data relationships as represented in the DBMS
-	* Additional details, such as performance tuning
+In Spark, and in other similar computational processes, this is called a  **Directed Acyclic Graph (DAG)**. The reference is made to the fact that no explicit repetition is inherent in the process. For example, if a specific file is read more than once in your code, Spark will only read it one time. Spark builds the DAG from your code, and checks if it can procrastinate, waiting until the last possible moment to get the data.
 
+A cycling team rotates their position in shifts to preserve energy. In Spark, these shifts are called  **stages**.** **As you watch the output of your Spark code, you will see output similar to this:
+```python
+[Stage 19:> ======>						 (0 + 1) / 1]
+```
 
+This means your code is on stage 19 of its physical execution plan. Data is processed in parallel tasks at each stage, separated by data partitions, so data in the same partition can be processed more efficiently.
 
----
-### Why is Data Modeling Important?
----
-According to [AWS](https://aws.amazon.com/what-is/data-modeling/), organizations today collect a large amount of data from many different sources. However, **raw data is not enough**. You need to *analyze data for actionable insights that can guide you to make profitable business decisions*. Accurate data analysis needs efficient **data collection, storage, and processing**. There are several database technologies and data processing tools, and different datasets require different tools for efficient analysis.
 
-* **Data Organization:** The organization of the data for your applications is extremely important and makes everyone's life easier.
-* **Use cases:** Having a well thought out and organized data model is critical to how that data can later be used. Queries that could have been straightforward and simple might become complicated queries if data modeling isn't well thought out.
-* **Starting early:** Thinking and planning ahead will help you be successful. This is not something you want to leave until the last minute.
-* **Iterative Process:** Data modeling is not a fixed process. It is iterative as new requirements and data are introduced. Having flexibility will help as new information becomes available.
+![Lazy Evaluation](https://video.udacity-data.com/topher/2021/September/613fe1ba_screen-shot-2021-09-13-at-6.41.30-pm/screen-shot-2021-09-13-at-6.41.30-pm.png)
 
 
----
-## Introduction to Relational Databases
----
+## Resilent Distributed Datasets
 
-### Relational Model
-This model **organizes data** into one or morte **tables** (or "relations") of **columns and rows**, with a **unique key* identifying each row. Generally, each table represents one "entity type" (such as customer or product).
+Spark processes data using a cluster of distributed computing resources. Source data is loaded from a database, CSV files, JSON files, or text files. Spark converts this data into an immutable collection of objects for distributed processing called a Resilent Distributed Dataset or RDD. The features of the RDD are designed for efficient data processing; it is fault-tolerant (recomputed in case of failure), cacheable, and partitioned.
 
+# PySpark and SparkSession
 
-![Relation](Images/relational-databases-relation.jpg)
+Python is one of many languages you can use to write Spark Jobs. If you choose to use Python, then you will use the  `PySpark`  library. PySpark gives you access to all the important Spark data constructs like:
 
-> "A **relational database** (term invented by *Edgar Codd* in 1970) is a digital database **based on the relational model** of data... a software system used to maintain relational databases is a *relational database management system* (**RDBMS**)." --Wikipedia
+-   RDDs
+-   DataFrames
+-   Spark SQL
 
-> "**SQL** (*Structured Query Language*) is the language used across almost all relational database system for querying and maintaining the database." --Wikipedia
+That means you can write Spark code that runs in either a Spark Cluster, in a Jupyter Notebook, or on your laptop. When you write code on your Jupyter Notebook or a laptop, Spark creates a temporary Spark node that runs locally. Because Spark uses Java, it is necessary to install the JDK on a computer used to run  `PySpark`  code.
 
-**Common Types of Relational Databases:**
-* *Oracle:* Used by almost every enterprise as their system of truth that handles *ACID* transactions. For example, banking systems run on Oracle.
-* *Teradata*
-* *MySQL*
-* *PostgreSQL*
-* *Sqlite:* Is a database in file format, and is generally used in development of extremely simple tasks in an application.
+## The SparkSession
 
-**To summarize:**
-* **Database/Schema:** Collection of tables.
-* **Tables/Relations:** Group of rows sharing the same labeled elements.
+-   The first component of each Spark Program is the  `SparkContext`. The  `SparkContext`  is the main entry point for Spark functionality and connects the cluster with the application.
+-   To create a  `SparkContext`, we first need a  `SparkConf`  object to specify some information about the application such as its name and the master's nodes' IP address. If we run Spark in local mode, we can just put the string  `local`  as master.
+-   To read data frames, we need to use Spark SQL equivalent, the  `SparkSession.`
+-   Similarity to the  `SparkConf`, we can specify some parameters to create a SparkSession.
+    -   `getOrCreate()`for example, means that if you already have a SparkSession running, instead of creating a new one, the old one will be returned and its parameters will be modified to the new configurations.
 
+## Maps and Lambda Functions in Spark
 
+One of the most common functions in Spark is  `map`. It simply makes a copy of the original input data and transforms that copy according to whatever function you pass to  `map`. You can think of it as directions for the data telling each input how to get to the output.
 
-### Advantages of using a Relational Database
-* **Flexibility for writing in SQL queries:** With SQL being the most common database query language.
-* **Modeling the data** not modeling queries
-* **Ability to do JOINS**
-* **Ability to do aggregations and analytics**
-* **Secondary Indexes available :** You have the advantage of being able to add another index to help with quick searching.
-* **Smaller data volumes:** If you have a smaller data volume (and not big data) you can use a relational database for its simplicity.
-* **ACID Transactions:** Allows you to meet a set of properties of database transactions intended to guarantee validity even in the event of errors, power failures, and thus maintain data integrity.
-* **Easier to change to business requirements**
-
-#### ACID Transactions
-
-> "... properties of database transactions intended to **guarantee validity** even in the event of **errors, power failures**..." --Wikipedia
-
-* **Atomicity:** <u>The whole transaction is processed or nothing is processed</u>. A commonly cited example of an atomic transaction is money transactions between two bank accounts. The transaction of transferring money from one account to the other is made up of two operations. First, you have to withdraw money in one account, and second you have to save the withdrawn money to the second account. An atomic transaction, i.e., when either all operations occur or nothing occurs, keeps the database in a consistent state. This ensures that if either of those two operations (withdrawing money from the 1st account or saving the money to the 2nd account) fail, the money is neither lost nor created. Source: [Wikipedia](https://en.wikipedia.org/wiki/Atomicity_%28database_systems%29) for a detailed description of this example.
-* **Consistency:** <u>Only transactions that abide by constraints and rules are written into the database, otherwise the database keeps the previous state</u>. The data should be correct across all rows and tables. Check out additional information about consistency on [Wikipedia](https://en.wikipedia.org/wiki/Consistency_%28database_systems%29).
-* **Isolation:** <u>Transactions are processed independently and securely, order does not matter</u>. A low level of isolation enables many users to access the data simultaneously, however this also increases the possibilities of concurrency effects (e.g., dirty reads or lost updates). On the other hand, a high level of isolation reduces these chances of concurrency effects, but also uses more system resources and transactions blocking each other. Source: [Wikipedia](https://en.wikipedia.org/wiki/Isolation_%28database_systems%29)
-* **Durability:** <u>Completed transactions are saved to database even in cases of system failure</u>. A commonly cited example includes tracking flight seat bookings. So once the flight booking records a confirmed seat booking, the seat remains booked even if a system failure occurs. Source: [Wikipedia](https://en.wikipedia.org/wiki/Durability_%28database_systems%29).
-
-
-
-#### When Not to Use a Relational Database
-* **Have large amounts of data:** Relational Databases are not distributed databases and because of this they can only scale vertically by adding more storage in the machine itself. You are limited by how much you can scale and how much data you can store on one machine. You cannot add more machines like you can in NoSQL databases.
-* **Need to be able to store different data type formats:** Relational databases are not designed to handle unstructured data.
-* **Need high throughput -- fast reads:** While ACID transactions bring benefits, they also slow down the process of reading and writing data. If you need very fast reads and writes, using a relational database may not suit your needs.
-* **Need a flexible schema:** Flexible schema can allow for columns to be added that do not have to be used by every row, saving disk space.
-* **Need high availability:** <u>High availability describes a database where there is very little downtime of the system, it is always on and functioning.</u> The fact that relational databases are not distributed (and even when they are, they have a coordinator/worker architecture), they have a single point of failure. When that database goes down, a fail-over to a backup system occurs and takes time.
-* **Need horizontal scalability:** Horizontal scalability is the <u>ability to add more machines or nodes to a system</u> to increase performance and space for data.
-
-## Introduction to PostgreSQL
-
-PostgreSQL is an open-source object-relational database system.
-
--   PostgreSQL uses and builds upon SQL database language by providing various features that reliably store and scale complicated data workloads.
--   PostgreSQL SQL syntax is different than other relational databases SQL syntax.
-
-All relational and non-relational databases tend to have their own SQL syntax and operations you can perform that are different between types of implementations. This note is just to make you aware of this, this course is focused on data modeling concepts.
-
-
-## Introduction to NoSQL Databases
-> _"A NoSQL database  has a simpler design, simpler horizontal scaling, and finer control of availability. Data structures used are different than those in Relational Databases: they make some operations faster." --Wikipedia_
-
-NoSQL databases were created do some of the issues faced with Relational Databases. NoSQL databases have been around since the 1970’s but they became more popular in use since the 2000’s as data sizes has increased, and outages/downtime has decreased in acceptability.
-
-**NoSQL Database Implementations:**
-
--   Apache Cassandra (Partition Row store)
--   MongoDB (Document store)
--   DynamoDB (Key-Value store)
--   Apache HBase (Wide Column Store)
--   Neo4J (Graph Database)
-
-![Relation](Images/Apache-Cassandra.png)
-
-
-### What is Apache Cassandra?
->_"Provides **scalability** and **high availability** without compromising performance. Linear Scalability and proven **fault-tolerance** on commodity hardware or cloud infrastructure make it the perfect platform for mission-critical data." --Apache Cassandra Documentation_
-
-**What type of companies use Apache Cassandra?**  
-All kinds of companies. For example, Uber uses Apache Cassandra for their entire backend. Netflix uses Apache Cassandra to serve all their videos to customers. Good use cases for NoSQL (and more specifically Apache Cassandra) are :
-
-1.  Transaction logging (retail, health care)
-2.  Internet of Things (IoT)
-3.  Time series data
-4.  Any workload that is heavy on writes to the database (since Apache Cassandra is optimized for writes).
-
-**Would Apache Cassandra be a hindrance for my analytics work? If yes, why?**  
-Yes, if you are trying to do analysis, such as using  `GROUP BY`  statements. Since Apache Cassandra requires data modeling based on the query you want, you can't do ad-hoc queries. However you can add clustering columns into your data model and create new tables.
-
-### When to Use a NoSql Database
-
--   **Need to be able to store different data type formats**: NoSQL was also created to handle different data configurations: structured, semi-structured, and unstructured data. JSON, XML documents can all be handled easily with NoSQL.
--   **Large amounts of data**: Relational Databases are not distributed databases and because of this they can only scale vertically by adding more storage in the machine itself. NoSQL databases were created to be able to be horizontally scalable. The more servers/systems you add to the database the more data that can be hosted with high availability and low latency (fast reads and writes).
--   **Need horizontal scalability**: Horizontal scalability is the ability to add more machines or nodes to a system to increase performance and space for data
--   **Need high throughput**: While ACID transactions bring benefits they also slow down the process of reading and writing data. If you need very fast reads and writes using a relational database may not suit your needs.
--   **Need a flexible schema**: Flexible schema can allow for columns to be added that do not have to be used by every row, saving disk space.
--   **Need high availability**: Relational databases have a single point of failure. When that database goes down, a failover to a backup system must happen and takes time.
-
-
-### When NOT to use a NoSQL Database?
-
--   **When you have a small dataset**: NoSQL databases were made for big datasets not small datasets and while it works it wasn’t created for that.
--   **When you need ACID Transactions**: If you need a consistent database with ACID transactions, then most NoSQL databases will not be able to serve this need. NoSQL database are eventually consistent and do not provide ACID transactions. However, there are exceptions to it. Some non-relational databases like MongoDB can support ACID transactions.
--   **When you need the ability to do JOINS across tables**: NoSQL does not allow the ability to do JOINS. This is not allowed as this will result in full table scans.
--   **If you want to be able to do aggregations and analytics**
--   **If you have changing business requirements:**  Ad-hoc queries are possible but difficult as the data model was done to fix particular queries
--   **If your queries are not available and you need the flexibility:** You need your queries in advance. If those are not available or you will need to be able to have flexibility on how you query your data you might need to stick with a relational database
-
-### Caveats to NoSQL and ACID Transactions
-
-There are some NoSQL databases that offer some form of ACID transaction. As of v4.0, MongoDB added multi-document ACID transactions within a single replica set. With their later version, v4.2, they have added multi-document ACID transactions in a sharded/partitioned deployment.
-
--   Check out this documentation from MongoDB on  [multi-document ACID transactions](https://www.mongodb.com/collateral/mongodb-multi-document-acid-transactions)
--   Here is another link documenting  [MongoDB's ability to handle ACID transactions](https://www.mongodb.com/blog/post/mongodb-multi-document-acid-transactions-general-availability)
-
-Another example of a NoSQL database supporting ACID transactions is MarkLogic.  
-
--   Check out this link from their  [blog](https://www.marklogic.com/blog/how-marklogic-supports-acid-transactions/)  that offers ACID transactions.
-
-
-
-
-
-
-
+#### Convert a List of Strings to Lowercase
+
+Let's walk through an example where the data is a list of thousands of strings of song titles:
+```python
+
+```
+
+```python
+"Despacito", 
+"Nice for what", 
+"No tears left to cry", 
+"Despacito", 
+"Havana", 
+"In my feelings", 
+"Nice for what", 
+"despacito", 
+"All the stars" 
+...
+```
+and we want to transform the strings to lowercase:
+```python
+"despacito", 
+"nice for what", 
+"no tears left to cry", 
+...
+```
+After some initialization, we'll convert the log of songs (just a normal Python list) to a distributed dataset that Spark can use. This uses a special `spark.sparkContext` object. The Spark Context has a method `parallelize` that takes a Python object and distributes the object across the machines in your cluster so Spark can process the dataset.
+```python
+distributed_song_log_rdd = spark.sparkContext.parallelize(log_of_songs)
+```
+
+Once this small dataset is accessible to Spark, we want to do something with it. One example is simply converting the song title to a lowercase, a common pre-processing step to standardize your data.
+```python
+def convert_song_to_lowercase(song): 
+	return song.lower()
+```
+Next, we can use the Spark function `map` to apply our `convert_song_to_lowercase` function to each song in our dataset.
+```python
+distributed_song_log_rdd.map(convert_song_to_lowercase)
+```
+
+All of these steps will appear to run instantly but remember, the spark commands are using lazy evaluation, they haven't really converted the songs to lowercase yet. Spark will procrastinate in transforming the songs to lowercase since you might have several other processing steps like removing punctuation, Spark wants to wait until the last minute to see if it can streamline its work, and combine these into a single stage.
+
+If we want to force Spark to take some action on the data, we can use the  `collect`  function, which gathers the results from all of the machines in our cluster.
+```python
+distributed_song_log_rdd.map(convert_song_to_lowercase).collect()
+```
+You can also use anonymous functions in Python. Anonymous functions are a Python feature for writing functional style programs. Use the special keyword `lambda`, and then write the input of the function followed by a colon and the expected output.
+```python
+distributed_song_log_rdd.map(lambda song: song.lower())
+```
+You'll see anonymous functions all over the place in Spark. They're completely optional, you could just define functions if you prefer. But lambdas are a best practice.
+
+
+# Data Formats
+
+
+The most common data formats you might come across are CSV, JSON, HTML, and XML.
+
+A CSV file, or comma-separated values file, stores tabular data in index format. Each line represents a record where fields are always in the same order defined usually by the first header. As the name suggests, the records are separated with a comma:
+```
+Name 		, Address . 	, City 			, State	, Zip 
+Andrea Cruz	, 123 Main St.	, Idaho Falls	, ID 	, 83404 
+Lamh Huynh 	, 456 Elm St. 	, Santa Cruz 	, CA 	, 95063
+```
+
+JSON or JavaScript object notation storage records in attribute-value pairs. The values may contain simple often numeric types or arrays:
+```json
+{ 
+"Name":"Andrea Cruz", 
+"Address":"123 Main St.", 
+"City":"Idaho Falls", 
+"State":"ID", "Zip":"83404" 
+}, 
+{ 
+"Name":"Lamh Huynh", 
+"Address":"456 Elm St.", 
+"City":"Santa Cruz", 
+"State":"CA", 
+"Zip":"95063" 
+}
+```
+
+HTML or hypertext markup language is a standard language for creating web pages and applications. If you scrape data from the Internet, you will need to parse HTML:
+```html
+<!DOCTYPE html> 
+<html lang="en"> 
+<div style="height: 90px"> 
+<head> 
+	<meta charset="UTF-8"> 
+	<title>STEDI Login Page</title> 
+	<link href="style.css" rel="stylesheet" type="text/css" /> 
+	<link rel="shortcut icon" href= "favicon.ico" type="image/x-icon" /> 
+</head> 
+<body> 
+<div class="page-header"> 
+	<p><img src="stedi-logo-4000px-x-4000px.png" width="200" height="200" style="background-color:black;"/></p>
+</div> 
+<div style="text-align:center"> 
+	<form name="loginForm" id="login" method="post" > 
+		<p> 
+			<labelfor="username">Email Address</label><br> 
+			<input type="text" id="username" name="username" size="25">
+		</p> 
+	</form> 
+</div> 
+</body> 
+</div> 
+</html>
+```
+
+# Distributed Data Stores
+
+When we have so much data that we need distributed computing,  **the data itself**  often needs to be stored in a  **distributed**  way.
+
+Distributed file systems, storage services, and distributed databases store data in a fault-tolerant way. So if a machine breaks or becomes unavailable, we don't lose the information we have collected.
+
+Hadoop has a Distributed File System,  **HDFS**, to store data. HDFS splits files into 64 or 128 megabyte blocks and replicates these blocks across the cluster. This way, the data is stored in a fault-tolerant way and can be accessed in digestible chunks.
+
+In the classroom workspaces and if you installed Spark on your local machine, Spark simulates a distributed file store. If you are working on a project or in a company that runs its own cluster resources, they might use HDFS.
