@@ -148,7 +148,7 @@ The most common data formats you might come across are CSV, JSON, HTML, and XML.
 
 A CSV file, or comma-separated values file, stores tabular data in index format. Each line represents a record where fields are always in the same order defined usually by the first header. As the name suggests, the records are separated with a comma:
 ```
-Name 		, Address . 	, City 			, State	, Zip 
+Name 		, Address . 	, City		, State	, Zip 
 Andrea Cruz	, 123 Main St.	, Idaho Falls	, ID 	, 83404 
 Lamh Huynh 	, 456 Elm St. 	, Santa Cruz 	, CA 	, 95063
 ```
