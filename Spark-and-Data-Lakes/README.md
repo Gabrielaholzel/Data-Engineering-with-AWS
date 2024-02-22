@@ -1,3 +1,4 @@
+
 # The Spark DAG: Teamwork for Data Processing
 
 ### The Spark DAG
@@ -207,3 +208,28 @@ Distributed file systems, storage services, and distributed databases store data
 Hadoop has a Distributed File System,  **HDFS**, to store data. HDFS splits files into 64 or 128 megabyte blocks and replicates these blocks across the cluster. This way, the data is stored in a fault-tolerant way and can be accessed in digestible chunks.
 
 In the classroom workspaces and if you installed Spark on your local machine, Spark simulates a distributed file store. If you are working on a project or in a company that runs its own cluster resources, they might use HDFS.
+
+
+
+## Imperative VS Declarative Programming
+
+We will cover two different ways to manipulate our data:
+
+**Imperative programming using DataFrames and Python**
+
+-   Imperative programming is concerned with the **How**
+	 > Let's get in the car, drive two miles down the road to my favorite bakery, go into the shop, select the cake from the counter, purchase the cake, and then drive home.
+    
+-   Focus on the exact steps, how we get to the result
+-   Data transformations with DataFrames
+
+**Declarative programming using SQL**
+
+-   Cares about the **What**
+	> Let's get the cake for Julia.
+-   Concerned about the result we want to achieve
+-   Abstraction layer of an imperative system
+
+If you have used pandas DataFrames before, you are probably familiar with how to manipulate DataFrames programmatically. We can chain methods such as filter and group by one after another, transforming the DataFrame further and further.
+
+![Imperative vs Declarative](https://video.udacity-data.com/topher/2021/September/614029d7_screen-shot-2021-09-13-at-11.41.03-pm/screen-shot-2021-09-13-at-11.41.03-pm.png)
