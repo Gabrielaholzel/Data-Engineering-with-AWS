@@ -1,4 +1,5 @@
 
+
 # The Spark DAG: Teamwork for Data Processing
 
 ### The Spark DAG
@@ -233,3 +234,104 @@ We will cover two different ways to manipulate our data:
 If you have used pandas DataFrames before, you are probably familiar with how to manipulate DataFrames programmatically. We can chain methods such as filter and group by one after another, transforming the DataFrame further and further.
 
 ![Imperative vs Declarative](https://video.udacity-data.com/topher/2021/September/614029d7_screen-shot-2021-09-13-at-11.41.03-pm/screen-shot-2021-09-13-at-11.41.03-pm.png)
+
+
+
+# Data Wrangling with DataFrames 
+
+## General functions
+
+We have several general functions that are quite similar to methods of pandas dataframes:
+
+-   `select()`: returns a new DataFrame with the selected columns
+-   `filter()`: filters rows using the given condition
+-   `where()`: is just an alias for  `filter()`
+-   `groupBy()`: groups the DataFrame using the specified columns, so we can run aggregation on them
+-   `sort()`: returns a new DataFrame sorted by the specified column(s). By default the second parameter 'ascending' is True.
+-   `dropDuplicates()`: returns a new DataFrame with unique rows based on all or just a subset of columns
+-   `withColumn()`: returns a new DataFrame by adding a column or replacing the existing column that has the same name. The first parameter is the name of the new column, the second is an expression of how to compute it.
+
+## Aggregate functions
+
+Spark SQL provides built-in methods for the most common aggregations such as  `count()`,  `countDistinct()`,  `avg()`,  `max()`,  `min()`, etc. in the pyspark.sql.functions module. These methods are not the same as the built-in methods in the Python Standard Library, where we can find  `min()`  for example as well, hence you need to be careful not to use them interchangeably.
+
+In many cases, there are multiple ways to express the same aggregations. For example, if we would like to compute one type of aggregate for one or more columns of the DataFrame we can just simply chain the aggregate method after a  `groupBy()`. If we would like to use different functions on different columns,  `agg()`comes in handy. For example  `agg({"salary": "avg", "age": "max"})`  computes the average salary and maximum age.
+
+## User defined functions (UDF)
+
+In Spark SQL we can define our own functions with the udf method from the pyspark.sql.functions module. The default type of the returned variable for UDFs is string. If we would like to return an other type we need to explicitly do so by using the different types from the pyspark.sql.types module.
+
+## Window functions
+
+Window functions are a way of combining the values of ranges of rows in a DataFrame. When defining the window we can choose how to sort and group (with the  `partitionBy`  method) the rows and how wide of a window we'd like to use (described by  `rangeBetween`  or  `rowsBetween`).
+
+For further information see the  [Spark SQL, DataFrames and Datasets Guide(opens in a new tab)](https://spark.apache.org/docs/latest/sql-programming-guide.html)  and the  [Spark Python API Docs(opens in a new tab)](https://spark.apache.org/docs/latest/api/python/index.html).
+
+
+# Spark SQL
+
+Spark comes with a SQL library that lets you query DataFrames using the same SQL syntax you'd use in a tool like MySQL or Postgres.
+
+## Advantages of Spark SQL
+
+You'll be able to share your Spark code with a wider community since many analysts and data scientists prefer using SQL.
+
+Spark automatically optimizes your SQL code, to speed up the process of manipulating and retrieving data.
+
+To follow the cake analogy, you simply tell your program to bake a cake, and Spark SQL will give you a great cake even if you don't detail the exact steps.
+
+### Spark SQL resources
+
+Here are a few resources that you might find helpful when working with Spark SQL
+
+-   [Spark SQL built-in functions(opens in a new tab)](https://spark.apache.org/docs/latest/api/sql/index.html)
+-   [Spark SQL guide(opens in a new tab)](https://spark.apache.org/docs/latest/sql-getting-started.html)
+
+
+
+## Data Wrangling User Logs
+
+The code below creates a temporary view against which you can run SQL queries.
+
+```python
+user_log.createOrReplaceTempView("user_log_table")
+```
+
+## Data Exploration
+
+Inspecting the first 5 rows with DataFrames:
+
+```python
+user_log.take(5)
+```
+
+You use the  `.sql()`method of the Spark object to run queries against the view, then provide SQL statements surrounded by quotes.
+
+Inspecting the first 2 rows with Spark SQL:
+
+```python
+spark.sql('''
+          SELECT * 
+          FROM user_log_table 
+          LIMIT 2
+          '''
+          ).show()
+```
+
+Select data for all pages where userId is 1046 with DataFrames:
+
+```python
+user_log_df.select(["userId", "firstname", "page", "song"])\
+		   .where(user_log_df.userId == "1046").show()
+```
+
+The same but with SQL:
+
+```python
+spark.sql('''
+          SELECT userID, firstname, page, song
+          FROM user_log_table 
+          WHERE userID == '1046'
+          '''
+          ).collect()
+```
