@@ -79,3 +79,118 @@ Spark, on the other hand, runs the operations and holds the data in the RAM memo
 ### Why Would You Use an EMR Cluster?
 
 Since a Spark cluster includes multiple machines, in order to use Spark code on each machine, we would need to download and install Spark and its dependencies. This is a manual process. AWS  **EMR**  is a service that negates the need for you, the user, to go through the manual process of installing Spark and its dependencies for each machine.
+
+
+
+
+## Glue Studio
+
+We started off by introducing Spark, then RDDs, and then Spark SQL. Spark SQL relies on RDDs, which rely on Spark itself. Similarly, Glue is an AWS Service that relies on Spark. You can use Glue Studio to write purely Spark scripts. We will also go over unique Glue features you can add to your script.
+
+Using AWS Glue to run Spark Jobs requires the following resources and configuration:
+
+![Glue Job Using S3 VPC Gateway](https://video.udacity-data.com/topher/2022/September/631d9060_l4-using-spark-in-aws-2/l4-using-spark-in-aws-2.jpeg)
+
+Glue Job Using S3 VPC Gateway
+
+#### Routing Table
+
+A routing table is an entity that stores the network paths to various locations. For example, it will store the path to S3 from within your VPC. You'll need a routing table to configure with your VPC Gateway. You will most likely only have a single routing table if you are using the default workspace.
+
+#### VPC Gateway
+
+Your cloud project runs resources within a Virtual Private Cloud (VPC). This means your Glue Job runs in a Secure Zone without access to anything outside your Virtual Network. For security reasons, this is very sensible. You don't want your glue job accessing resources on the internet, for example, unless you specifically require it.
+
+A VPC Gateway is a network entity that gives access to outside networks and resources. Since S3 doesn't reside in your VPC, you need a VPC Gateway to establish a secure connection between your VPC and S3. This allows your Glue Job, or any other resources within the VPC, to utilize S3 for data storage and retrieval.
+
+#### S3 Gateway Endpoint
+
+By default, Glue Jobs can't reach any networks outside of your Virtual Private Cloud (VPC). Since the S3 Service runs in different network, we need to create what's called an S3 Gateway Endpoint. This allows S3 traffic from your Glue Jobs into your S3 buckets. Once you have created the endpoint, your Glue Jobs will have a network path to reach S3.
+
+#### S3 Buckets
+
+Buckets are storage locations within AWS, that have a hierarchical directory-like structure. Once you create an S3 bucket, you can create as many sub-directories, and files as you want. The bucket is the "parent" of all of these directories and files.
+
+
+
+## Configuring the S3 VPC Gateway Endpoint
+
+### Configuring AWS Glue: S3 VPC Gateway Endpoint
+
+#### Step 1: Creating an S3 Bucket
+
+Buckets are storage locations within AWS, that have a hierarchical directory-like structure. Once you create an S3 bucket, you can create as many sub-directories, and files as you want. The bucket is the "parent" of all of these directories and files.
+
+To create an S3 bucket use the  `aws s3 mb`  command:  `aws s3 mb s3://_______`  replacing the blank with the name of your bucket. You can also create S3 buckets using the AWS web console.
+
+#### Step 2: S3 Gateway Endpoint
+
+By default, Glue Jobs can't reach any networks outside of your Virtual Private Cloud (VPC). Since the S3 Service runs in different network, we need to create what's called an S3 Gateway Endpoint. This allows S3 traffic from your Glue Jobs into your S3 buckets. Once we have created the endpoint, your Glue Jobs will have a network path to reach S3.
+
+First use the AWS CLI to identify the VPC that needs access to S3:
+
+`aws ec2 describe-vpcs`
+
+The output should look something like this (look for the VpcId in the output):
+
+  
+```JSON
+`{
+    "Vpcs": [
+        {
+            "CidrBlock": "172.31.0.0/16",
+            "DhcpOptionsId": "dopt-756f580c",
+            "State": "available",
+            "VpcId": "vpc-7385c60b",
+            "OwnerId": "863507759259",
+            "InstanceTenancy": "default",
+            "CidrBlockAssociationSet": [
+                {
+                    "AssociationId": "vpc-cidr-assoc-664c0c0c",
+                    "CidrBlock": "172.31.0.0/16",
+                    "CidrBlockState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "IsDefault": true
+        }
+    ]
+}
+```
+
+
+### Routing Table
+
+Next, identify the routing table you want to configure with your VPC Gateway. You will most likely only have a single routing table if you are using the default workspace. Look for the RouteTableId:
+
+`aws ec2 describe-route-tables`
+
+```JSON
+{
+	"RouteTables":  [
+		{
+		.  .  .  
+			"PropagatingVgws":  [],
+			"RouteTableId":  "rtb-bc5aabc1",
+			"Routes":  [
+				{
+					"DestinationCidrBlock":  "172.31.0.0/16",
+					"GatewayId":  "local",
+					"Origin":  "CreateRouteTable",
+					"State":  "active"
+				}
+			],
+			"Tags":  [],
+			"VpcId":  "vpc-7385c60b",
+			"OwnerId":  "863507759259"
+		}
+	]
+}
+```
+
+#### Create an S3 Gateway Endpoint
+
+Finally create the S3 Gateway, replacing the blanks with the  **VPC**  and  **Routing Table Ids**:
+
+`aws ec2 create-vpc-endpoint --vpc-id _______ --service-name com.amazonaws.us-east-1.s3 --route-table-ids _______`
