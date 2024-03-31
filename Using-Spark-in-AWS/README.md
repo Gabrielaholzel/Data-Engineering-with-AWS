@@ -194,3 +194,50 @@ Next, identify the routing table you want to configure with your VPC Gateway. Yo
 Finally create the S3 Gateway, replacing the blanks with the  **VPC**  and  **Routing Table Ids**:
 
 `aws ec2 create-vpc-endpoint --vpc-id _______ --service-name com.amazonaws.us-east-1.s3 --route-table-ids _______`
+
+
+### Creating the Glue Service IAM Role
+
+AWS uses Identity and Access Management (IAM) service to manage users, and roles (which can be reused by users and services). A Service Role in IAM is a Role that is used by an AWS Service to interact with cloud resources.
+
+![Glue Job Using S3 VPC Gateway](https://video.udacity-data.com/topher/2022/September/631d938e_l4-using-spark-in-aws/l4-using-spark-in-aws.jpeg)
+
+Glue Job Using S3 VPC Gateway
+
+For AWS Glue to act on your behalf to access S3 and other resources, you need to grant access to the Glue Service by creating an IAM Service Role that can be assumed by Glue:
+
+```python
+aws iam create-role --role-name my-glue-service-role --assume-role-policy-document '{
+	"Version":  "2012-10-17",
+	"Statement":  [
+		{
+			"Effect":  "Allow",
+			"Principal":  {
+				"Service":  "glue.amazonaws.com"
+			},
+			"Action":  "sts:AssumeRole"
+		}
+	]
+}'
+```
+
+
+#### Grant Glue Privileges on the S3 Bucket
+
+Replace the two blanks below with the S3 bucket name you created earlier, and execute this command to allow your Glue job read/write/delete access to the bucket and everything in it. You will notice the S3 path starts with  `arn:aws:s3:::`  . An ARN is an AWS Resource Name. The format is generally:
+
+`arn:[aws/aws-cn/aws-us-gov]:[service]:[region]:[account-id]:[resource-id]`
+
+You may notice that after  `s3`  there are three colons  `:::`  without anything between them. That is because S3 buckets can be cross-region, and cross AWS account. For example you may wish to share data with a client, or vice versa. Setting up an S3 bucket with cross AWS account access may be necessary.
+
+**Replace the blanks in the statement below with your S3 bucket name (ex: seans-lakehouse)**  
+`aws iam put-role-policy --role-name my-glue-service-role --policy-name S3Access --policy-document '{ "Version": "2012-10-17", "Statement": [ { "Sid": "ListObjectsInBucket", "Effect": "Allow", "Action": [ "s3:ListBucket" ], "Resource": [ "arn:aws:s3:::_______" ] }, { "Sid": "AllObjectActions", "Effect": "Allow", "Action": "s3:*Object", "Resource": [ "arn:aws:s3:::_______/*" ] } ] }'`
+
+## Spark Jobs
+
+Jupyter notebooks are great for prototyping as well as exploring and visualizing your data. However, Jupyter notebooks aren't the best tool for automating your workflow, that's where Python scripts come into play.
+
+Imagine you work for a social media company that receives a constant stream of text, image, and video data from your users. To keep up with your users, you want your Spark jobs to run automatically at specific intervals, perhaps once every hour. These Spark jobs give your entire team the latest information on their users and will probably become so useful to your team that they will start to request more and more Spark jobs. You won't want to manually run a growing collection of notebooks, you'll want automated scripts that you can set and forget. We will be using Glue Studio to write Spark jobs that can be automated, and set to run at certain intervals.
+
+![Running Spark scripts at a time interval](https://video.udacity-data.com/topher/2021/September/6140d3da_screen-shot-2021-09-14-at-11.54.36-am/screen-shot-2021-09-14-at-11.54.36-am.png)
+
