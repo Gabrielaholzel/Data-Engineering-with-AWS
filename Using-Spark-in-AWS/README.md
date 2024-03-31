@@ -241,3 +241,212 @@ Imagine you work for a social media company that receives a constant stream of t
 
 ![Running Spark scripts at a time interval](https://video.udacity-data.com/topher/2021/September/6140d3da_screen-shot-2021-09-14-at-11.54.36-am/screen-shot-2021-09-14-at-11.54.36-am.png)
 
+# Create a Spark Job using Glue Studio
+
+![Glue Studio Flow Diagram](https://video.udacity-data.com/topher/2022/September/631f9e58_l4-using-spark-in-aws-1/l4-using-spark-in-aws-1.jpeg)
+
+## Using Glue Studio to Create Spark Jobs
+
+Glue Studio is a Graphical User Interface (GUI) for interacting with Glue to create Spark jobs with added capabilities. Glue APIs give access to things like Glue Tables, and Glue Context. These APIs are designed to enhance your Spark experience by simplifying development.
+
+You can create Glue Jobs by writing, and uploading python code, but Glue Studio also provides a drag and drop experience. When you create a flow diagram using Glue Studio, it generates the Python or Scala Code for you automatically. The code is stored with additional configuration for running in Spark, including third-party libraries, job parameters, and the AWS IAM Role Glue uses.
+
+![Sample Glue Studio Job](https://video.udacity-data.com/topher/2023/October/653c5e6c_1-customer_landing_to_trusted/1-customer_landing_to_trusted.jpeg)
+
+Sample Glue Studio Job
+
+### Glue Studio Visual Editor
+
+The Glue Studio Visual Editor allows you to select three types of nodes when creating a pipeline:
+
+-   Source- the data that will be consumed in the pipeline
+-   Transform - any transformation that will be applied
+-   Target - the destination for the data
+
+### Sources
+
+A common source is an S3 location or a Glue Table. But a source can be any AWS Database including:
+
+-   Amazon S3
+-   AWS Glue Data Catalog
+-   Amazon DynamoDB
+-   Amazon Kinesis
+-   Apache Kafka
+-   Amazon Redshift
+-   MySQL
+-   PostgreSQL
+-   Microsoft SQL Server
+-   Oracle SQL
+-   Snowflake
+-   Google BigQuery
+
+### Transform
+
+Common transformations include Joins, Field Mapping, and Filter. Custom SQL statements are also supported. Here is a list of some of the transformations available:
+
+-   Apply Mapping
+-   Select Fields
+-   Drop Fields
+-   Drop Null Fields
+-   Drop Duplicates
+-   Rename Field
+-   Spigot
+-   Join
+-   Split Fields
+-   Select from Collection
+-   Filter
+-   Union
+-   Aggregate
+-   Fill Missing Values
+-   Custom Transform
+-   Custom SQL
+-   Detect PII
+
+### Targets
+
+All of the source types are also supported as targets. We will discuss more in this course about how to organize S3 storage and catalog it as Glue Tables in a way that keeps data logically separated.
+
+### Create a Spark Job with Glue Studio
+
+To use Glue Studio, search for it in the AWS Console. Then click the  **AWS Glue Studio**  menu option.
+
+![Glue Studio in the AWS Console](https://video.udacity-data.com/topher/2022/June/62bc4026_screen-shot-2022-06-29-at-6.05.29-am/screen-shot-2022-06-29-at-6.05.29-am.jpeg)
+
+Glue Studio in the AWS Console
+
+Select either  **ETL Jobs**  or  **Visual ETL**  from the Glue Studio Menu
+
+![AWS Glue Studio Menu](https://video.udacity-data.com/topher/2023/October/653c6643_2-menu/2-menu.jpeg)
+
+AWS Glue Studio Menu
+
+Select  **Jobs**  from the Glue Studio Menu
+
+![AWS Glue Studio Menu](https://video.udacity-data.com/topher/2022/June/62bc40a4_screen-shot-2022-06-29-at-6.07.03-am/screen-shot-2022-06-29-at-6.07.03-am.jpeg)
+
+AWS Glue Studio Menu
+
+To get started, go with the default selection -  **Visual with a source and a target,**  and click  **Create**
+
+![AWS Glue Studio Create Job](https://video.udacity-data.com/topher/2022/June/62bc41a7_screen-shot-2022-06-29-at-6.12.11-am/screen-shot-2022-06-29-at-6.12.11-am.jpeg)
+
+AWS Glue Studio Create Job
+
+Before we forget, under  **Job Details**  create a  **name**  for the Job, and choose the  **IAM Role**  the job will use during execution. This should be the Glue Service Role you created earlier.
+
+![Glue Job Details](https://video.udacity-data.com/topher/2022/June/62bc442c_screen-shot-2022-06-29-at-6.22.59-am/screen-shot-2022-06-29-at-6.22.59-am.jpeg)
+
+Glue Job Details
+
+### Extract and Load Customer Data
+
+Let's assume a website creates a daily JSON file of all new customers created during the previous 24 hours. That JSON file will go into the S3  **landing zone**  designated for new data. A landing zone is a place where new data arrives prior to processing.
+
+We can copy a sample customer file into S3 using the the AWS Command Line Interface (CLI). In the command below the blank should be replaced with the name of the S3 bucket you created:
+
+`aws s3 cp ./project/starter/customer/landing/customer-1691348231425.json s3://_______/customer/landing/`
+
+### Privacy Filter
+
+One of the most important transformations is excluding Personally Identifiable Information (PII). Glue has an out-of-the-box filter, but we are going to make our own. For the  **source**  in your Glue Studio Job, choose the S3 bucket you created earlier, with the folder containing the  **raw**  or  **landing**  customer data. The folder should have a forward-slash / on the end.
+
+Click on the  `+`  button, then pick  **Amazon S3**  from the  **Source**  tab
+
+  
+  
+
+![Choose Source as Amazon S3](https://video.udacity-data.com/topher/2023/October/653c68a2_3-privacy_filter-1/3-privacy_filter-1.jpeg)
+
+Choose Source as Amazon S3
+
+_Under Node properties, name the Data source appropriately, for example: Customer Landing or Customer Raw._
+
+![Customer Data Source (Landing Zone)](https://video.udacity-data.com/topher/2023/October/653c68f9_4-privacy_filter-2/4-privacy_filter-2.jpeg)
+
+Customer Data Source (Landing Zone)
+
+For the  **transformation**, select the  **filter**  option
+
+![Filter Option](https://video.udacity-data.com/topher/2023/October/653c694e_filter_option/filter_option.jpeg)
+
+Filter Option
+
+Filter on the  _shareWithResearchAsOfDate_  timestamp field, and configure it to filter out customers that have an empty zero_shareWithResearchAsOfDate_.
+
+_Name the Transform appropriately, for example: Share With Research_
+
+![Privacy Filter](https://video.udacity-data.com/topher/2023/October/653c6992_5-privacy_filter-3/5-privacy_filter-3.jpeg)
+
+Privacy Filter
+
+For your destination choose an S3 location for customers who have chosen to share with research, or a  **trusted zone**. The S3 bucket should be the bucket you created earlier. Any time you specify a folder that doesn't exist, S3 will automatically create it the first time data is placed there. Be sure to add the forward-slash on the end of the folder path.
+
+![Customer Data Target (Trusted Zone)](https://video.udacity-data.com/topher/2023/October/653c69fa_6-privacy_filter-4/6-privacy_filter-4.jpeg)
+
+Customer Data Target (Trusted Zone)
+
+### Save and Run the Job
+
+You will notice the red triangle at the top of the screen saying "**Job has not been saved**."
+
+Click the Save button, then click Run:
+
+![Save and Run the Job](https://video.udacity-data.com/topher/2022/June/62bc4e48_screen-shot-2022-06-29-at-7.06.08-am/screen-shot-2022-06-29-at-7.06.08-am.jpeg)
+
+Save and Run the Job
+
+On the green ribbon, click the  **Run Details**  link
+
+![Click Run Details](https://video.udacity-data.com/topher/2022/June/62bc4ed3_screen-shot-2022-06-29-at-7.08.17-am/screen-shot-2022-06-29-at-7.08.17-am.jpeg)
+
+Click Run Details
+
+You will then see the run details. By default the job will run three times before quitting. To view the logs, click the  **Error Logs**  link. This includes all of the non-error logs as well.
+
+![Run Details](https://video.udacity-data.com/topher/2022/June/62bc4f5f_screen-shot-2022-06-29-at-7.09.29-am/screen-shot-2022-06-29-at-7.09.29-am.jpeg)
+
+Run Details
+
+To see the logs in real-time, click the  **log stream id**
+
+![Log Streams](https://video.udacity-data.com/topher/2022/June/62bc5077_screen-shot-2022-06-29-at-7.14.51-am/screen-shot-2022-06-29-at-7.14.51-am.jpeg)
+
+Log Streams
+
+If the log viewer stops, click the  **resume**  button. It often pauses if the output takes more than a couple of seconds to progress to the next step. Notice that most of the output in this example is INFO. If you see a row marked as ERROR, you can expand that row to determine the error:
+
+![Job Log output](https://video.udacity-data.com/topher/2022/June/62bc50f3_screen-shot-2022-06-29-at-7.16.29-am/screen-shot-2022-06-29-at-7.16.29-am.jpeg)
+
+Job Log output
+
+### View the Generated Script
+
+To view the generated script, go back to Glue Studio, and click the  **Script**  tab:
+
+![Glue Script](https://video.udacity-data.com/topher/2022/June/62bc52ef_screen-shot-2022-06-29-at-7.25.54-am/screen-shot-2022-06-29-at-7.25.54-am.jpeg)
+
+Glue Script
+
+In this project, you will create tables from your S3 files.
+
+We will later revisit this Glue Job and change the option to Create a table in the Data Catalog and on subsequent runs, update the schema and add new partitions. With this, the Glue Job will create a table and update the metadata on subsequent runs.
+
+  
+
+_Important_
+
+Glue Jobs does not delete any data stored in the S3 bucket. You must manually delete the files when you need to re-run your Glue Jobs.
+
+### Save and Run the Job
+
+  
+
+You will notice the red triangle at the top of the screen saying "Job has not been saved."
+
+  
+
+Click the Save button, then click Run:
+
+![Run the Job](https://video.udacity-data.com/topher/2022/July/62da967b_screen-shot-2022-07-22-at-6.21.56-am/screen-shot-2022-07-22-at-6.21.56-am.jpeg)
+
+Run the Job
