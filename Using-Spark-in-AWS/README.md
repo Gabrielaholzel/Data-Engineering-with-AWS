@@ -450,3 +450,47 @@ Click the Save button, then click Run:
 ![Run the Job](https://video.udacity-data.com/topher/2022/July/62da967b_screen-shot-2022-07-22-at-6.21.56-am/screen-shot-2022-07-22-at-6.21.56-am.jpeg)
 
 Run the Job
+
+
+
+# Storing and Retrieving Data on the Cloud
+
+## Using S3 to Read and Write Data
+
+One of the most common places to store big data sets is Amazon's Simple Storage Service or S3 for short. Amazon S3 is a safe, easy, and cheap place to store big data. Amazon does all the work of maintaining the hardware, keeping backups, and making sure the data is almost always available. You can think about it like Dropbox or iCloud for your big data. You don't need to worry about the details of how S3 works, the Amazon engineers take care of that. You just need to know how to use S3 with Spark. So, next, we will show you how to store data in S3 and then retrieve the data for your Spark program.
+
+### Using Glue Dynamic Frames to Read S3
+
+Glue adds the concept of a Dynamic Frame to Spark, which is very similar to a Data Frame. Data Frames can be converted to Dynamic Frames and vice versa.
+
+### Using S3 Buckets to Store Data
+
+S3 stores an object, and when you identify an object, you need to specify a bucket, and key to identify the object. In Glue jobs, you can still use Spark Data Frames.
+
+For example,
+
+ ```python
+ df = spark.read.load(“s3://my_bucket/path/to/file/file.csv”)
+ ``` 
+
+From this code,  `s3://my_bucket`  is the bucket, and  `path/to/file/file.csv`  is the key for the object. Thankfully, if we’re using Spark and all the objects underneath the bucket have the same schema, you can do something like the following.
+
+ ```python
+df  = spark.read.load(“s3://my_bucket/”)
+```
+
+This will generate a dataframe of all the objects underneath the  `my_bucket`  with the same schema.
+
+Imagine you have a structure in S3 like this:
+
+ ```python
+ my_bucket
+	 |---test.csv
+	 path/to/
+		 |--test2.csv
+		 file/
+			 |--test3.csv
+			 |--file.csv
+ ``` 
+
+**If all the csv files underneath  `my_bucket`, which are  `test.csv`,  `test2.csv`,  `test3.csv`, and  `file.csv`  have the same schema, the DataFrame will be generated without error, but if there are conflicts in schema between files, then the DataFrame will not be generated.**
