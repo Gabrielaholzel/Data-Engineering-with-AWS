@@ -494,3 +494,15 @@ Imagine you have a structure in S3 like this:
  ``` 
 
 **If all the csv files underneath  `my_bucket`, which are  `test.csv`,  `test2.csv`,  `test3.csv`, and  `file.csv`  have the same schema, the DataFrame will be generated without error, but if there are conflicts in schema between files, then the DataFrame will not be generated.**
+
+
+
+## Differences between HDFS and AWS S3
+
+### Differences between HDFS and AWS S3
+
+Since Spark does not have its own distributed storage system, it leverages HDFS or AWS S3, or any other distributed storage. Primarily in this course, we will be using AWS S3, but let’s review the advantages of using HDFS over AWS S3.
+
+-   **AWS S3**  is an  **object storage system**  that stores the data using key value pairs, and  **HDFS**  is an  **actual distributed file system**  that guarantees fault tolerance. HDFS achieves fault tolerance by duplicating the same files at 3 different nodes across the cluster by default (it can be configured to reduce or increase this duplication).
+-   HDFS has traditionally been installed in on-premise systems which had engineers on-site to maintain and troubleshoot the Hadoop Ecosystem,  **costing more than storing data in the cloud**. Due to the flexibility of location and reduced cost of maintenance, cloud solutions have been more popular. With the extensive services AWS provides, S3 has been a more popular choice than HDFS.
+-   Since  **AWS S3 is a binary object store**, it can  **store all kinds of formats**, even images and videos. HDFS strictly requires a file format - the popular choices are  **avro**  and  **parquet**, which have relatively high compression rates making it useful for storing large datasets.
