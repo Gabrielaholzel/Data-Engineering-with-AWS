@@ -30,7 +30,7 @@ With  **ELT**, however, and with a Lakehouse, the data stays in semi-structured 
 
 **Curated Zone**
 
-**"**As a last step, the processing layer curates a trusted zone dataset by modeling it and joining it with other datasets, and stores it in curated layer."
+**"As a last step, the processing layer curates a trusted zone dataset by modeling it and joining it with other datasets, and stores it in curated layer."**
 
 "Typically, datasets from the curated layer are partly or fully ingested into Amazon Redshift data warehouse storage to serve use cases that need very low latency access or need to run complex SQL queries."
 
