@@ -18,8 +18,8 @@ spark = glueContext.spark_session
 job = Job(glueContext)
 job.init(args['JOB_NAME'], args)
 
-# Script generated for node Accelerometer Landing
-AccelerometerLanding_node1713704579173 = glueContext.create_dynamic_frame.from_catalog(database="stedi", table_name="accelerometer_landing", transformation_ctx="AccelerometerLanding_node1713704579173")
+# Script generated for node Accelerometer Trusted
+AccelerometerTrusted_node1713704579173 = glueContext.create_dynamic_frame.from_catalog(database="stedi", table_name="accelerometer_trusted", transformation_ctx="AccelerometerTrusted_node1713704579173")
 
 # Script generated for node Customer Trusted
 CustomerTrusted_node1713704560146 = glueContext.create_dynamic_frame.from_catalog(database="stedi", table_name="customer_trusted", transformation_ctx="CustomerTrusted_node1713704560146")
@@ -37,10 +37,10 @@ serialnumber
 ,lastupdatedate
 ,phone
 ,sharewithfriendsasofdate
-from al inner join ct on 
-al.user = ct.email
+from at inner join ct on 
+at.user = ct.email
 '''
-SQLQuery_node1713704867594 = sparkSqlQuery(glueContext, query = SqlQuery0, mapping = {"al":AccelerometerLanding_node1713704579173, "ct":CustomerTrusted_node1713704560146}, transformation_ctx = "SQLQuery_node1713704867594")
+SQLQuery_node1713704867594 = sparkSqlQuery(glueContext, query = SqlQuery0, mapping = {"al":AccelerometerTrusted_node1713704579173, "ct":CustomerTrusted_node1713704560146}, transformation_ctx = "SQLQuery_node1713704867594")
 
 # Script generated for node Customer Curated
 CustomerCurated_node1713705383772 = glueContext.getSink(path="s3://geh-stedi/customer/curated/", connection_type="s3", updateBehavior="UPDATE_IN_DATABASE", partitionKeys=[], enableUpdateCatalog=True, transformation_ctx="CustomerCurated_node1713705383772")
