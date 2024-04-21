@@ -30,7 +30,7 @@ With  **ELT**, however, and with a Lakehouse, the data stays in semi-structured 
 
 **Curated Zone**
 
-**"As a last step, the processing layer curates a trusted zone dataset by modeling it and joining it with other datasets, and stores it in curated layer."**
+**"**As a last step, the processing layer curates a trusted zone dataset by modeling it and joining it with other datasets, and stores it in curated layer."
 
 "Typically, datasets from the curated layer are partly or fully ingested into Amazon Redshift data warehouse storage to serve use cases that need very low latency access or need to run complex SQL queries."
 
@@ -39,7 +39,6 @@ Source:  [(opens in a new tab)](https://aws.amazon.com/blogs/big-data/build-a-la
 ### Structure and Format
 
 Because querying and reading data from S3 is billed by the gigabyte, optimizing those queries is a very good idea. Data can be compressed at a very high ratio, using  **gzip**  and other compression formats. Whenever possible, data in S3 should also be in a columnar format like  **parquet**  files. This means that when issuing queries to S3, the entire row of data doesn't need to be scanned to locate a single field. The query becomes more efficient and cheaper.
-
 
 
 # Use Glue Catalog to Query a Landing Zone
@@ -76,8 +75,6 @@ Navigate to the side menu and select  _Databases_. Subsequently, initiate the da
 
 ![Add database](https://video.udacity-data.com/topher/2023/December/65865879_screenshot-2023-12-23-091758/screenshot-2023-12-23-091758.jpeg)
 
-Add database
-
 Input your database name and click the  _Create database_  button.
 
   
@@ -106,7 +103,6 @@ Here are the settings for the data source: please keep the source type as S3, as
 
 ![Enter the full path to the folder for your customer landing zone](https://video.udacity-data.com/topher/2023/December/65865984_screenshot-2023-12-23-092231/screenshot-2023-12-23-092231.jpeg)
 
-Enter the full path to the folder for your customer landing zone
 
 ### Choose the data format
 
@@ -120,16 +116,13 @@ Look at the sample JSON data below:
 
 `{  "customerName":  "Santosh Clayton",  "email":  "Santosh.Clayton@test.com",  "phone":  "8015551212",  "birthDay":  "1900-01-01",  "serialNumber":  "50f7b4f3-7af5-4b07-a421-7b902c8d2b7c",  "registrationDate":  1655564376361,  "lastUpdateDate":  1655564376361,  "shareWithResearchAsOfDate":  1655564376361,  "shareWithPublicAsOfDate":  1655564376361,  "shareWithFriendsAsOfDate":  1655564376361  }`
 
-  
-  
-
 Using the sample record above, define the fields in the glue table. You can input one entry by clicking the  _Add_  button.
 
   
 
 ![Define the fields using the sample record](https://video.udacity-data.com/topher/2023/December/65865a04_screenshot-2023-12-23-092437/screenshot-2023-12-23-092437.jpeg)
 
-Define the fields using the table definition tool
+
 
 ### Partition Indices
 
@@ -157,7 +150,7 @@ Click the View Settings button:
 
 ![View Settings](https://video.udacity-data.com/topher/2022/July/62d95c10_screen-shot-2022-07-21-at-8.00.30-am/screen-shot-2022-07-21-at-8.00.30-am.jpeg)
 
-View Settings
+
 
 Enter the full S3 path you want Athena to save query results. Encryption makes it less likely that sensitive data will be compromised. For this exercise we will skip encryption:
 
@@ -169,13 +162,13 @@ Click the Editor tab:
 
 ![Query Editor](https://video.udacity-data.com/topher/2022/July/62d95e64_screen-shot-2022-07-21-at-8.10.31-am/screen-shot-2022-07-21-at-8.10.31-am.jpeg)
 
-Query Editor
+
 
 From this menu, click on the Create button and then choose S3 bucket data:
 
 ![Create table menu](https://video.udacity-data.com/topher/2023/November/65427582_6-create_table_menu/6-create_table_menu.jpeg)
 
-Create table menu
+
 
 Enter the table name you are creating, and choose "Create a database" if not already created, then type in the database name in which the table should reside
 
@@ -185,13 +178,13 @@ Choose the directory that contains the physical landing zone data
 
 ![Customer landing zone location](https://video.udacity-data.com/topher/2023/November/654277f3_8-s3_path/8-s3_path.jpeg)
 
-Customer landing zone location
+
 
 Choose JSON for the data format for your customer landing zone data, leave everything else as default
 
 ![JSON data Format options](https://video.udacity-data.com/topher/2023/November/654278d4_9-json/9-json.jpeg)
 
-JSON data Format options
+
 
 #### Define the fields
 
@@ -215,7 +208,7 @@ Using the sample record above, define the fields in the glue table, and click Cr
 
 ![Customer landing table definition](https://video.udacity-data.com/topher/2023/November/65427928_10-table_defs/10-table_defs.jpeg)
 
-Customer landing table definition
+
 
 In the Editor tab, pick the database you have just created.
 
@@ -223,8 +216,107 @@ Enter a simple query like:  `select * from customer_landing`  and click run
 
 ![Simple query](https://video.udacity-data.com/topher/2022/July/62c43889_screen-shot-2022-07-05-at-7.10.50-am/screen-shot-2022-07-05-at-7.10.50-am.jpeg)
 
-Select
+
 
 Now that you see results, you can use any desired SQL query parameters further refine your query and analyze the data in the landing zone:
 
 ![Query results](https://video.udacity-data.com/topher/2022/July/62c43956_screen-shot-2022-07-05-at-7.13.05-am/screen-shot-2022-07-05-at-7.13.05-am.jpeg)
+
+
+
+# PII in the Landing Zone
+
+## Ingesting Sensitive Data
+
+Before we can process sensitive accelerometer data, we need to bring it into the  **landing zone**.
+
+Using the AWS Cloudshell or CLI, copy the accelerometer data into an S3 landing zone with the  `s3 cp`  command (where the blank is the S3 bucket you created earlier):
+
+`cd nd027-Data-Engineering-Data-Lakes-AWS-Exercises/project/starter aws s3 cp accelerometer/ s3://your-own-bucket-name/accelerometer/ --recursive`
+
+Utilize AWS CloudShell or CLI to list the data in the landing zone, replacing "your-own-bucket-name" with the bucket name you created earlier in the course:
+
+`aws s3 ls s3://your-own-bucket-name/accelerometer/landing/`
+
+### Handling Sensitive Data
+
+Data in the landing zone should be dealt with very carefully. It shouldn't be made available for analytics or business intelligence.
+
+### Define a Glue Table for the Accelerometer Landing Zone
+
+Now that you have some data in the landing zone you can define a glue table to make ad hoc querying easier. The landing zone should not be used for reporting or analytics, since the data is not qualified to be used for those purposes. However, you may want to get an idea of what the data looks like.
+
+Go to Athena, select the database, and create a new table from S3 bucket data
+
+![Create a table from S3 bucket data](https://video.udacity-data.com/topher/2022/July/62c82a93_screen-shot-2022-07-08-at-7.00.56-am/screen-shot-2022-07-08-at-7.00.56-am.jpeg)
+
+
+
+Name the table something appropriate for the landing zone, choose the database, and enter a path  **ending with a slash**. As always, replace the “seans-stedi-lakehouse” of the S3 path with your own bucket name.
+
+![S3 Table Settings](https://video.udacity-data.com/topher/2022/July/62c82caa_screen-shot-2022-07-08-at-7.09.48-am/screen-shot-2022-07-08-at-7.09.48-am.jpeg)
+
+
+
+Choose the JSON data format, and add column names and types
+
+![Define the Data](https://video.udacity-data.com/topher/2022/July/62c981b5_screen-shot-2022-07-09-at-7.24.58-am/screen-shot-2022-07-09-at-7.24.58-am.jpeg)
+
+Preview the create table query and click  **create table**:
+
+![Create Table](https://video.udacity-data.com/topher/2022/July/62c981d6_screen-shot-2022-07-09-at-7.25.26-am/screen-shot-2022-07-09-at-7.25.26-am.jpeg)
+
+
+
+Copy the table query, and save it as accelerometer_landing.sql, then push it to your GitHub repository:
+
+![Create Table Query](https://video.udacity-data.com/topher/2022/July/62c981ff_screen-shot-2022-07-09-at-7.26.07-am/screen-shot-2022-07-09-at-7.26.07-am.jpeg)
+
+# Streaming Data Analysis
+
+### Streaming Message Brokers
+
+Spark is intended to process data that was previously generated. It doesn't process data in real time.  **Spark Streaming**  gives us the option of processing data in near real-time.
+
+Often data is generated in real-time and then is stored for later processing. A common example is  **IoT**  or Internet of Things, which consists of small devices sending internet-connected messages. These devices send messages to convey meaning about the world. A smart thermostat is an IoT device. It continually communicates back with a server to send usage statistics to the end user.
+
+Because servers are not always designed to handle large volumes of real-time data,  **message brokers**  were created. They are intended to "broker" connections between systems and make near real-time processing of data possible.
+
+Some examples of message brokers are:
+
+-   Kafka
+-   Simple Queue Services (AWS SQS)
+-   Amazon Kinesis
+
+### Brokers aren't Forever
+
+Message brokers don't last forever. Neither do the data they store. They are intended to facilitate a message being received and re-transmitted. This event typically should happen within seven days. Then the data will be deleted from the  **Raw Zone**.
+
+To keep messages longer, we move them into a  **Landing Zone**. This is where the data can be loaded and transformed for later use in the  **Trusted**  and  **Curated Zone**.
+
+![Streaming Data Processing](https://video.udacity-data.com/topher/2022/September/63215b09_l5-ingesting-and-organizing-data-in-a-lakehouse-1/l5-ingesting-and-organizing-data-in-a-lakehouse-1.jpeg)
+
+### Using Glue to Process Streaming Data
+
+Glue can load data directly from Kafka or Kinesis. AWS doesn't offer Glue support for SQS at this time. Using Spark Streaming, we can load data from Message Brokers into a Spark DataFrame or Glue DynamicFrame.
+
+We can then join data from the Message Broker with other data sources as part of the streaming job to create  **Trusted**  or  **Curated data**. Kafka can be configured to load data into S3 using a Kafka Connector as a  **Landing Zone**, avoiding the need to connect Glue to Kafka directly.
+
+# Curated Data
+
+## Data Curation
+
+Most museum have a curator, or a person who ensures the collection of artifacts meet the standards of the museum. For a Data Lake or Lakehouse, you are the curator. Your job is to prepare high quality data for others to use. A lot of work happens behind the scenes in a museum.
+
+In fact, the curator has zones just like a Data Lakehouse. They receive the museum pieces, then they decide which pieces to display, and lastly they put them in the museum for visitors to enjoy. Many pieces are in storage because it isn't time for them to be on display.
+
+How will you decide which data should appear for others to use?
+
+### Curated Data Attributes
+
+-   High quality
+-   Filtered for privacy
+-   Can be a composition of multiple data sources
+
+We can **join** multiple trusted data sources, and apply other transformations to create curated data.
+
