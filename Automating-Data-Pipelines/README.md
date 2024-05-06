@@ -219,8 +219,9 @@ Task dependencies can be described programmatically in Airflow using  `>>`  and 
 
  ```python
 hello_world_task = PythonOperator(task_id=’hello_world’, ...)
-goodbye_world_task = PythonOperator(task_id=’goodbye_world’, ...)  ...
-# Use >> to denote that goodbye_world_task depends on hello_world_task
+goodbye_world_task = PythonOperator(task_id=’goodbye_world’, ...)  
+...
+	# Use >> to denote that goodbye_world_task depends on hello_world_task
 hello_world_task >> goodbye_world_task
 ```
 
@@ -235,4 +236,34 @@ Tasks dependencies can also be set with “set_downstream” and “set_upstream
  ...
  hello_world_task.set_downstream(goodbye_world_task)
 ```
+
+
+# Airflow Hooks
+
+### Connection via Airflow Hooks
+
+Connections can be accessed in code via hooks. Hooks provide a reusable interface to external systems and databases. With hooks, you don’t have to worry about how and where to store these connection strings and secrets in your code.
+
+ ```python
+ from airflow import DAG 
+ from airflow.hooks.postgres_hook import PostgresHook 
+ from airflow.operators.python_operator import PythonOperator 
+
+def  load():
+	# Create a PostgresHook option using the `demo` connection  
+	db_hook = PostgresHook(‘demo’)  
+	df = db_hook.get_pandas_df('SELECT * FROM rides')
+	print(f'Successfully used PostgresHook to return {len(df)} records')
+
+load_task = PythonOperator(task_id=’load’, 
+	python_callable=hello_world,...)
+```
+
+Airflow comes with many Hooks that can integrate with common systems. Here are a few common ones:
+
+-   `HttpHook`
+-   `PostgresHook`  (works with RedShift)
+-   `MySqlHook`
+-   `SlackHook`
+-   `PrestoHook`
 
