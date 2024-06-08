@@ -1,5 +1,4 @@
-
-
+# Introduction to Data Warehouses
 
 ### Operational vs Analytical Business Processes
 
