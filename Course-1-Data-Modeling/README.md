@@ -1,12 +1,4 @@
-
-# Data Engineering with AWS
-
-Welcome!
-
-This repo is meant to be used as a notes bank for the [Data Engineering with AWS](https://www.udacity.com/course/data-engineer-nanodegree--nd027) nanodegree program by [Udacity](https://learn.udacity.com/).
-
----
-## Introduction to Data Modeling
+# Introduction to Data Modeling
 ---
 ### What is Data Modeling?
 > "... an abstraction that **organizes elements of data** and **how** they will **relate** to each other" -- Wikipedia
