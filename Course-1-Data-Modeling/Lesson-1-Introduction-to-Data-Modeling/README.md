@@ -66,7 +66,7 @@ According to [AWS](https://aws.amazon.com/what-is/data-modeling/), organizations
 This model **organizes data** into one or morte **tables** (or "relations") of **columns and rows**, with a **unique key* identifying each row. Generally, each table represents one "entity type" (such as customer or product).
 
 
-![Relation](Images/relational-databases-relation.jpg)
+![Relation](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/a85ff7520c659997582b9650b588626f40fc3c4a/Images/relational-databases-relation.jpg)
 
 > "A **relational database** (term invented by *Edgar Codd* in 1970) is a digital database **based on the relational model** of data... a software system used to maintain relational databases is a *relational database management system* (**RDBMS**)." --Wikipedia
 
@@ -137,7 +137,7 @@ NoSQL databases were created do some of the issues faced with Relational Databas
 -   Apache HBase (Wide Column Store)
 -   Neo4J (Graph Database)
 
-![Relation](Images/Apache-Cassandra.png)
+![Relation](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/blob/a85ff7520c659997582b9650b588626f40fc3c4a/Images/Apache-Cassandra.png)
 
 
 ### What is Apache Cassandra?
