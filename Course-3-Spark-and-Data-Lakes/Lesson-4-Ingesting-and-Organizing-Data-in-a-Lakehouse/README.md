@@ -1,6 +1,33 @@
-# Lakehouse Architecture
+# Ingesting and Organizing Data in a Lakehouse
+**Table of contents**
+- [Lakehouse Architecture](#lakehouse-architecture)
+  * [The Lakehouse](#the-lakehouse)
+    + [Lakehouse Zones](#lakehouse-zones)
+  * [Structure and Format](#structure-and-format)
+- [Use Glue Catalog to Query a Landing Zone](#use-glue-catalog-to-query-a-landing-zone)
+  * [Tackle Boxes and Glue](#tackle-boxes-and-glue)
+  * [Glue Tables](#glue-tables)
+    + [Using the Glue Console to Define a Table](#using-the-glue-console-to-define-a-table)
+    + [Choose the data format](#choose-the-data-format)
+    + [Define the fields](#define-the-fields)
+    + [Partition Indices](#partition-indices)
+    + [AWS Athena - a Glue Catalog Query Tool](#aws-athena---a-glue-catalog-query-tool)
+      - [Define the fields](#define-the-fields-1)
+- [PII in the Landing Zone](#pii-in-the-landing-zone)
+  * [Ingesting Sensitive Data](#ingesting-sensitive-data)
+    + [Handling Sensitive Data](#handling-sensitive-data)
+    + [Define a Glue Table for the Accelerometer Landing Zone](#define-a-glue-table-for-the-accelerometer-landing-zone)
+- [Streaming Data Analysis](#streaming-data-analysis)
+    + [Streaming Message Brokers](#streaming-message-brokers)
+    + [Brokers aren't Forever](#brokers-arent-forever)
+    + [Using Glue to Process Streaming Data](#using-glue-to-process-streaming-data)
+- [Curated Data](#curated-data)
+  * [Data Curation](#data-curation)
+    + [Curated Data Attributes](#curated-data-attributes)
 
-## The Lakehouse
+## Lakehouse Architecture
+
+### The Lakehouse
 
 The  **Lakehouse**  is another evolution of data storage. The purpose of a Lakehouse is to separate data processing into stages. Like an oil refinery, data is staged and processed step by step until it becomes available for querying.
 
@@ -8,7 +35,7 @@ Lakehouse is not a specific technology. It can be implemented using any file sto
 
 ![Lakehouse](https://video.udacity-data.com/topher/2022/September/6320fd4f_l5-ingesting-and-organizing-data-in-a-lakehouse/l5-ingesting-and-organizing-data-in-a-lakehouse.jpeg)
 
-### Lakehouse Zones
+#### Lakehouse Zones
 
 Think about our invoice example earlier. An accounting system is the destination for the files in the landing directory. That accounting system is responsible for extracting the invoices from the invoice files, transforming them into the correct format, and loading them into the accounting database where they can be paid. These steps are known as  **ETL (Extract, Transform, and Load).**  With ETL, usually data is going from a semi-structured (files in directories) format to a structured format (tables).
 
@@ -41,9 +68,9 @@ Source:  [(opens in a new tab)](https://aws.amazon.com/blogs/big-data/build-a-la
 Because querying and reading data from S3 is billed by the gigabyte, optimizing those queries is a very good idea. Data can be compressed at a very high ratio, using  **gzip**  and other compression formats. Whenever possible, data in S3 should also be in a columnar format like  **parquet**  files. This means that when issuing queries to S3, the entire row of data doesn't need to be scanned to locate a single field. The query becomes more efficient and cheaper.
 
 
-# Use Glue Catalog to Query a Landing Zone
+## Use Glue Catalog to Query a Landing Zone
 
-## Tackle Boxes and Glue
+### Tackle Boxes and Glue
 
 Have you ever been fishing with an expert fisher? One thing you will notice is that they usually have something called a "Tackle Box." The Tackle Box has all of the bait and lures fishers can use to catch the varieties of fish they are looking for.
 
@@ -61,7 +88,7 @@ There are  [multiple ways to create Glue Tables(opens in a new tab)](https://doc
 -   Configure a Glue Job to generate a table definition automatically
 -   Use SQL to define a table with DDL (Data Definition Language) or create statements
 
-### Using the Glue Console to Define a Table
+#### Using the Glue Console to Define a Table
 
 Imagine you have the Customer data we looked at earlier in an S3 bucket directory, and you want to know how many records have been placed in the Customer Landing Zone. You could create a  **Glue Table**  definition to query the data using SQL.
 
@@ -104,13 +131,13 @@ Here are the settings for the data source: please keep the source type as S3, as
 ![Enter the full path to the folder for your customer landing zone](https://video.udacity-data.com/topher/2023/December/65865984_screenshot-2023-12-23-092231/screenshot-2023-12-23-092231.jpeg)
 
 
-### Choose the data format
+#### Choose the data format
 
 Choose JSON for the data format for your customer landing zone data, and click next
 
 ![Select the data format](https://video.udacity-data.com/topher/2023/December/658659a7_screenshot-2023-12-23-092304/screenshot-2023-12-23-092304.jpeg)
 
-### Define the fields
+#### Define the fields
 
 Look at the sample JSON data below:
 
@@ -124,13 +151,13 @@ Using the sample record above, define the fields in the glue table. You can inpu
 
 
 
-### Partition Indices
+#### Partition Indices
 
 We can partition a table based on the index, or field, so that data is separated by category or other fields. For now we are going to skip this, click next, and then finish to confirm the table.
 
 ![Click finish to confirm](https://video.udacity-data.com/topher/2023/December/65865a25_screenshot-2023-12-23-092509/screenshot-2023-12-23-092509.jpeg)
 
-### AWS Athena - a Glue Catalog Query Tool
+#### AWS Athena - a Glue Catalog Query Tool
 
 Now that you have defined a table using the glue catalog, you might want to query the table. Previously we had to use Spark SQL and relied on Spark schemas to query data. Using the Glue Data Catalog, we can query data using an AWS tool called  [Athena(opens in a new tab)](https://aws.amazon.com/athena/). The Athena tool is a serverless query service where you can write SQL to run ad-hoc queries on S3 buckets.
 
@@ -186,7 +213,7 @@ Choose JSON for the data format for your customer landing zone data, leave every
 
 
 
-#### Define the fields
+##### Define the fields
 
   
 
@@ -224,9 +251,9 @@ Now that you see results, you can use any desired SQL query parameters further r
 
 
 
-# PII in the Landing Zone
+## PII in the Landing Zone
 
-## Ingesting Sensitive Data
+### Ingesting Sensitive Data
 
 Before we can process sensitive accelerometer data, we need to bring it into the  **landing zone**.
 
@@ -238,11 +265,11 @@ Utilize AWS CloudShell or CLI to list the data in the landing zone, replacing "y
 
 `aws s3 ls s3://your-own-bucket-name/accelerometer/landing/`
 
-### Handling Sensitive Data
+#### Handling Sensitive Data
 
 Data in the landing zone should be dealt with very carefully. It shouldn't be made available for analytics or business intelligence.
 
-### Define a Glue Table for the Accelerometer Landing Zone
+#### Define a Glue Table for the Accelerometer Landing Zone
 
 Now that you have some data in the landing zone you can define a glue table to make ad hoc querying easier. The landing zone should not be used for reporting or analytics, since the data is not qualified to be used for those purposes. However, you may want to get an idea of what the data looks like.
 
@@ -272,9 +299,9 @@ Copy the table query, and save it as accelerometer_landing.sql, then push it to 
 
 ![Create Table Query](https://video.udacity-data.com/topher/2022/July/62c981ff_screen-shot-2022-07-09-at-7.26.07-am/screen-shot-2022-07-09-at-7.26.07-am.jpeg)
 
-# Streaming Data Analysis
+## Streaming Data Analysis
 
-### Streaming Message Brokers
+#### Streaming Message Brokers
 
 Spark is intended to process data that was previously generated. It doesn't process data in real time.  **Spark Streaming**  gives us the option of processing data in near real-time.
 
@@ -288,7 +315,7 @@ Some examples of message brokers are:
 -   Simple Queue Services (AWS SQS)
 -   Amazon Kinesis
 
-### Brokers aren't Forever
+#### Brokers aren't Forever
 
 Message brokers don't last forever. Neither do the data they store. They are intended to facilitate a message being received and re-transmitted. This event typically should happen within seven days. Then the data will be deleted from the  **Raw Zone**.
 
@@ -296,15 +323,15 @@ To keep messages longer, we move them into a  **Landing Zone**. This is where th
 
 ![Streaming Data Processing](https://video.udacity-data.com/topher/2022/September/63215b09_l5-ingesting-and-organizing-data-in-a-lakehouse-1/l5-ingesting-and-organizing-data-in-a-lakehouse-1.jpeg)
 
-### Using Glue to Process Streaming Data
+#### Using Glue to Process Streaming Data
 
 Glue can load data directly from Kafka or Kinesis. AWS doesn't offer Glue support for SQS at this time. Using Spark Streaming, we can load data from Message Brokers into a Spark DataFrame or Glue DynamicFrame.
 
 We can then join data from the Message Broker with other data sources as part of the streaming job to create  **Trusted**  or  **Curated data**. Kafka can be configured to load data into S3 using a Kafka Connector as a  **Landing Zone**, avoiding the need to connect Glue to Kafka directly.
 
-# Curated Data
+## Curated Data
 
-## Data Curation
+### Data Curation
 
 Most museum have a curator, or a person who ensures the collection of artifacts meet the standards of the museum. For a Data Lake or Lakehouse, you are the curator. Your job is to prepare high quality data for others to use. A lot of work happens behind the scenes in a museum.
 
@@ -312,7 +339,7 @@ In fact, the curator has zones just like a Data Lakehouse. They receive the muse
 
 How will you decide which data should appear for others to use?
 
-### Curated Data Attributes
+#### Curated Data Attributes
 
 -   High quality
 -   Filtered for privacy
