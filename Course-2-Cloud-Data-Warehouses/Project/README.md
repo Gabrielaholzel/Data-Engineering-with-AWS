@@ -27,7 +27,7 @@ To set up the project, follow these steps:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/your-username/Sparkify-Data-Warehouse.git
+   git clone https://github.com/Gabrielaholzel/Data-Engineering-with-AWS.git
 
 2. **Configure AWS Credentials**:
 
