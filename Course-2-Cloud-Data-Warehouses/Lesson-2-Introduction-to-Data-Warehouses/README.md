@@ -1,6 +1,16 @@
 # Introduction to Data Warehouses
+**Table of contents**
+- [Operational vs Analytical Business Processes](#operational-vs-analytical-business-processes)
+- [Data Warehouse Architecture](#data-warehouse-architecture)
+  * [Data Warehouse: Technical Perspective](#data-warehouse-technical-perspective)
+  * [ETL: A Closer Look](#etl-a-closer-look)
+  * [Dimensional Model Review](#dimensional-model-review)
+  * [Example: The DVD Rentals Sample Database](#example-the-dvd-rentals-sample-database)
+  * [Naive Extract Transform and Load (ETL): From Third Normal Form to ETL](#naive-extract-transform-and-load-etl-from-third-normal-form-to-etl)
+- [OLAP Cubes](#olap-cubes)
 
-### Operational vs Analytical Business Processes
+
+## Operational vs Analytical Business Processes
 
 **Operational processes:**  Make it work.
 
@@ -75,23 +85,6 @@ Loading:
 -   Record the context of the business events, e.g. who, what, where, why, etc..
 -   Dimension tables columns contain attributes like the store at which an item is purchased or the customer who made the call, etc.
 
-  
-
-### ETL: A Closer Look
-
-**Extracting:**
-
--   Transfer data to the warehouse
-
-**Transforming:**
-
--   Integrates many sources together
--   Possibly cleansing: inconsistencies, duplication, missing values, etc..
--   Possibly producing diagnostic metadata
-
-**Loading:**
-
--   Structuring and loading the data into the dimensional data model
 
 ### Example: The DVD Rentals Sample Database
 
@@ -115,7 +108,7 @@ Third Normal Form Schema VS Star Schema
 
 -   Insert into facts & dimension tables
 
-# OLAP Cubes
+## OLAP Cubes
 
 **OLAP Cubes** are queries that return multiple dimensions of data in a fact and dimensional data set. It is a model for querying data that is easy to communicate to business users. 
 
