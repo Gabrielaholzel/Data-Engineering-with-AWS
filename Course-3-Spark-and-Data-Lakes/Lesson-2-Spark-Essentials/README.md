@@ -1,12 +1,34 @@
-
-
 # The Spark DAG: Teamwork for Data Processing
+**Table of Contents**
+  * [The Spark DAG](#the-spark-dag)
+    + [Cycling Team](#cycling-team)
+      - [Dividing the Work](#dividing-the-work)
+  * [Directed Acyclic Graph (DAG)](#directed-acyclic-graph-dag)
+  * [Resilent Distributed Datasets](#resilent-distributed-datasets)
+- [PySpark and SparkSession](#pyspark-and-sparksession)
+  * [The SparkSession](#the-sparksession)
+  * [Maps and Lambda Functions in Spark](#maps-and-lambda-functions-in-spark)
+      - [Convert a List of Strings to Lowercase](#convert-a-list-of-strings-to-lowercase)
+- [Data Formats](#data-formats)
+- [Distributed Data Stores](#distributed-data-stores)
+  * [Imperative VS Declarative Programming](#imperative-vs-declarative-programming)
+- [Data Wrangling with DataFrames](#data-wrangling-with-dataframes)
+  * [General functions](#general-functions)
+  * [Aggregate functions](#aggregate-functions)
+  * [User defined functions (UDF)](#user-defined-functions-udf)
+  * [Window functions](#window-functions)
+- [Spark SQL](#spark-sql)
+  * [Advantages of Spark SQL](#advantages-of-spark-sql)
+    + [Spark SQL resources](#spark-sql-resources)
+  * [Data Wrangling User Logs](#data-wrangling-user-logs)
+  * [Data Exploration](#data-exploration)
 
-### The Spark DAG
+
+## The Spark DAG
 
 Apache Spark distributes data processing tasks over a cluster of distributed computing resources. How does it accomplish this?
 
-#### Cycling Team
+### Cycling Team
 
 Imagine a team of road cyclists, who share their water with each other to reduce the load of the person cycling in the front. Each time the lead cyclist rotates to the back, they take the duty of carrying the new lead cyclist's water. This works great,  _until they become separated_.
 
