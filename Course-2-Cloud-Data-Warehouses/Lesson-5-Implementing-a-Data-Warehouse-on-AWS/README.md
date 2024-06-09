@@ -1,4 +1,12 @@
 # Implementing a Data Warehouse on AWS
+**Table of contents**
+- [Amazon Redshift](#amazon-redshift)
+  * [Amazon Redshift Architecture](#amazon-redshift-architecture)
+- [Ingesting Data at Scale](#ingesting-data-at-scale)
+  * [Transferring Data from an S3 Staging Area to Redshift](#transferring-data-from-an-s3-staging-area-to-redshift)
+- [Optimizing Table Design with Distribution Styles](#optimizing-table-design-with-distribution-styles)
+  * [Distribution Styles](#distribution-styles)
+  * [Sorting Keys](#sorting-keys)
 
 ## Amazon Redshift
 
