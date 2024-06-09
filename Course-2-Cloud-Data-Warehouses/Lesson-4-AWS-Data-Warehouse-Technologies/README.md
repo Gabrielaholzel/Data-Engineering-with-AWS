@@ -1,4 +1,8 @@
 # AWS Data Warehouse Technologies
+**Table of contents**
+- [Building Data Warehouses with AWS Redshift](#building-data-warehouses-with-aws-redshift)
+- [Using AWS Data Services](#using-aws-data-services)
+  * [Amazon Web Services](#amazon-web-services)
 
 ## Building Data Warehouses with AWS Redshift
 
