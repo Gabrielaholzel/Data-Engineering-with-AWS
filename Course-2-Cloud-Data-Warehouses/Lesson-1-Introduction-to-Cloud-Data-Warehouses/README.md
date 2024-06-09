@@ -1,4 +1,11 @@
 # Introduction to Data Warehouses
+**Table of contents**
+- [Introduction to Data Warehouses](#introduction-to-data-warehouses)
+- [Tools and Environment](#tools-and-environment)
+  * [Python](#python)
+  * [Amazon Web Services (AWS)](#amazon-web-services-aws)
+  * [Local Environment](#local-environment)
+
 
 ## Introduction to Data Warehouses
 
