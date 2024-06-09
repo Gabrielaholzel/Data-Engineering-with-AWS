@@ -142,9 +142,5 @@ Here are some example queries to gain insights into the Sparkify dataset:
    ORDER BY play_count DESC
    LIMIT 10;
 
-## Helpful Hints
-* **Security Considerations**: Be mindful of security concerns related to AWS credentials, roles, and regions.
-* **AWS Account:** Udacity provides a temporary AWS account, but you can use your own AWS account if needed.
-
 ## Acknowledgements
 This project is part of the Data Engineering Nanodegree at [Udacity](https://www.udacity.com/).
