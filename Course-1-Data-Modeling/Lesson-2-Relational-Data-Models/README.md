@@ -1,4 +1,25 @@
 # Relational Data Models
+**Table of contents**
+  * [Databases](#databases)
+    + [Importance of Relational Databases:](#importance-of-relational-databases)
+      - [Additional Resource on the difference between OLTP and OLAP:](#additional-resource-on-the-difference-between-oltp-and-olap)
+    + [Normalization and Denormalization](#normalization-and-denormalization)
+      - [Objectives of Normal Form:](#objectives-of-normal-form)
+      - [Process of Normalization](#process-of-normalization)
+- [Denormalization Vs. Normalization](#denormalization-vs-normalization)
+  * [Example of Denormalized Data](#example-of-denormalized-data)
+  * [Example of Normalized Data](#example-of-normalized-data)
+  * [Fact and Dimension Tables](#fact-and-dimension-tables)
+    + [Star Schemas](#star-schemas)
+      - [Additional Resources](#additional-resources)
+      - [Benefits of Star Schema](#benefits-of-star-schema)
+      - [Drawbacks of Star Schema](#drawbacks-of-star-schema)
+    + [Snowflake Schemas](#snowflake-schemas)
+- [Data Definition and Constraints](#data-definition-and-constraints)
+  * [NOT NULL](#not-null)
+  * [UNIQUE](#unique)
+  * [PRIMARY KEY](#primary-key)
+
 ## Databases
 
 **Database:** A set of related data and the way it is organized.
@@ -177,8 +198,6 @@ It's a logical arrangement of tables in a multidimensional database represented 
 -   Star Schema is a special, simplified case of the snowflake schema.
 -   Star schema does not allow for one to many relationships while the snowflake schema does.
 -   Snowflake schema is more normalized than Star schema but only in 1NF or 2NF
-
-# Data Definition and Constraints
 
 ## Data Definition and Constraints
 
