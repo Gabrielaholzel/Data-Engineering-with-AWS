@@ -4,7 +4,7 @@
 
 **Table of contents:**
 
-- [Insight: From Hadoop to Data Lakehouse](#from-hadoop-to-data-lakehouse)
+- [From Hadoop to Data Lakehouse](#from-hadoop-to-data-lakehouse)
   * [Hadoop Vocabulary](#hadoop-vocabulary)
   * [How is Spark related to Hadoop?](#how-is-spark-related-to-hadoop)
   * [Streaming Data](#streaming-data)
