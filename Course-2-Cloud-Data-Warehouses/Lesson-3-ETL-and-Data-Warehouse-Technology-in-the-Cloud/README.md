@@ -1,4 +1,12 @@
 # ELT and Data Warehouse Technology in the Cloud
+**Table of contents**
+- [From ETL to ELT](#from-etl-to-elt)
+  * [ELT in Cloud Environments](#elt-in-cloud-environments)
+  * [ELT originated from ETL](#elt-originated-from-etl)
+- [Cloud Managed SQL Storage](#cloud-managed-sql-storage)
+- [Database Management Systems](#database-management-systems)
+- [Cloud ETL Pipeline Services](#cloud-etl-pipeline-services)
+- [Cloud Data Warehouse Solutions](#cloud-data-warehouse-solutions)
 
 Data warehouses have been around for a long time but recently they have received significant attention in the data industry in relation to cloud computing. With traditional, on-premise data warehouses, an organization needed to buy physical hardware to fit the pre-defined need. Modern cloud infrastructures allow data warehouses to be scaled on-demand in response to changing needs.
 
