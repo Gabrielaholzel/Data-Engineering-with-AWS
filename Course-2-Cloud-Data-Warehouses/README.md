@@ -32,7 +32,7 @@
 -   OLAP cube as aggregations of data on a number of dimensions
 -   Slicing, dicing, Roll Up and Drill Down operations with OLAP cubes
 
-## [Lesson 3 - ELT and Data Warehouse Technology in the Cloud](https://github.com/Gabrielaholzel/Data-Engineering-with-AWS/tree/16d10a265e0470c7b0981cba96f7077707201391/Course-2-Cloud-Data-Warehouses/Lesson-3-ETL-and-Data-Warehouse-Technology-in-the-Cloud)
+## [Lesson 3 - ELT and Data Warehouse Technology in the Cloud](Course-2-Cloud-Data-Warehouses/Lesson-3-ETL-and-Data-Warehouse-Technology-in-the-Cloud)
 
 -   Using ETL and ELT techniques
 -   Using Relational and NoSQL databases in the cloud
