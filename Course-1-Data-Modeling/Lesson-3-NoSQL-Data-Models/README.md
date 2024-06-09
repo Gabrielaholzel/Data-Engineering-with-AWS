@@ -1,13 +1,33 @@
 # Non-Relational Databases
+**Table of contents**
+- [When to Use NoSQL:](#when-to-use-nosql)
+- [What is Apache Cassandra?](#what-is-apache-cassandra)
+- [Distributed Databases](#distributed-databases)
+  * [Eventual Consistency:](#eventual-consistency)
+  * [Commonly Asked Questions:](#commonly-asked-questions)
+- [Apache Cassandra Architecture](#apache-cassandra-architecture)
+  * [CAP Theorem](#cap-theorem)
+  * [CAP Theorem:](#cap-theorem)
+  * [Additional Resource:](#additional-resource)
+  * [Commonly Asked Questions:](#commonly-asked-questions-1)
+  * [Data Modeling in Apache Cassandra:](#data-modeling-in-apache-cassandra)
+  * [Commonly Asked Questions:](#commonly-asked-questions-2)
+    + [Cassandra Query Language](#cassandra-query-language)
+  * [Primary Key](#primary-key)
+  * [Clustering Columns:](#clustering-columns)
+    + [Commonly Asked Questions:](#commonly-asked-questions-3)
+  * [WHERE clause](#where-clause)
+    + [Additional Resource](#additional-resource)
+    + [Commonly Asked Questions:](#commonly-asked-questions-4)
 
-### When to Use NoSQL:
+## When to Use NoSQL:
 -   **Need high Availability in the data**: Indicates the system is always up and there is no downtime
 -   **Have Large Amounts of Data**
 -   **Need Linear Scalability**: The need to add more nodes to the system so performance will increase linearly
 -   **Low Latency**: Shorter delay before the data is transferred once the instruction for the transfer has been received.
 -   **Need fast reads and write**
 
-### What is Apache Cassandra?
+## What is Apache Cassandra?
  - Open Source NoSQL DB
  - Masterless architecture
  - High Availability
@@ -129,23 +149,23 @@ The **primary key** is how each row can be uniquely identified and how the data 
 -   More than one clustering column can be added (or none!)
 -   From there the clustering columns will sort in order of how they were added to the primary key
 
-### Commonly Asked Questions:
+#### Commonly Asked Questions:
 
 **How many clustering columns can we add?**
 
 You can use as many clustering columns as you would like. You cannot use the clustering columns out of order in the SELECT statement. You may choose to omit using a clustering column in your SELECT statement. That's OK. Just remember to use them in order when you are using the SELECT statement.
 
 
-## WHERE clause
+### WHERE clause
 
 -   Data Modeling in Apache Cassandra is query focused, and that focus needs to be on the WHERE clause
 -   Failure to include a WHERE clause will result in an error
 
-### Additional Resource
+#### Additional Resource
 
 AVOID using "ALLOW FILTERING": Here is a reference  [in DataStax](https://www.datastax.com/dev/blog/allow-filtering-explained-2)  that explains ALLOW FILTERING and why you should not use it.
 
-### Commonly Asked Questions:
+#### Commonly Asked Questions:
 
 **Why do we need to use a  `WHERE`  statement since we are not concerned about analytics? Is it only for debugging purposes?**  
 The  `WHERE`  statement is allowing us to do the fast reads. With Apache Cassandra, we are talking about big data -- think terabytes of data -- so we are making it fast for read purposes. Data is spread across all the nodes. By using the  `WHERE`  statement, we know which node to go to, from which node to get that data and serve it back. For example, imagine we have 10 years of data on 10 nodes or servers. So 1 year's data is on a separate node. By using the  `WHERE year = 1`  statement we know which node to visit fast to pull the data from.
