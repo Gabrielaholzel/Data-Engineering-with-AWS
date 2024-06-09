@@ -1,6 +1,21 @@
 # Introduction to Data Modeling
----
-### What is Data Modeling?
+**Table of contents**
+- [What is Data Modeling?](#what-is-data-modeling)
+  * [Why is Data Modeling Important?](#why-is-data-modeling-important)
+- [Introduction to Relational Databases](#introduction-to-relational-databases)
+  * [Relational Model](#relational-model)
+  * [Advantages of using a Relational Database](#advantages-of-using-a-relational-database)
+    + [ACID Transactions](#acid-transactions)
+    + [When Not to Use a Relational Database](#when-not-to-use-a-relational-database)
+- [Introduction to PostgreSQL](#introduction-to-postgresql)
+- [Introduction to NoSQL Databases](#introduction-to-nosql-databases)
+  * [What is Apache Cassandra?](#what-is-apache-cassandra)
+  * [When to Use a NoSql Database](#when-to-use-a-nosql-database)
+  * [When NOT to use a NoSQL Database?](#when-not-to-use-a-nosql-database)
+  * [Caveats to NoSQL and ACID Transactions](#caveats-to-nosql-and-acid-transactions)
+ 
+  
+## What is Data Modeling?
 > "... an abstraction that **organizes elements of data** and **how** they will **relate** to each other" -- Wikipedia
 
 > "Data modeling is the **process of creating a visual representation** or a blueprint that defines the **information collection and management systems** of any organization. This blueprint or data model helps different stakeholders, like data analysts, scientists, and engineers, to create a unified view of the organization's data. The model **outlines what data the business collects, the relationship between different datasets, and the methods that will be used to store and analyze the data**." -- AWS
