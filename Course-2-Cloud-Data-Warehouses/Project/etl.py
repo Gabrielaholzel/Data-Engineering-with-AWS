@@ -65,7 +65,7 @@ def validate_queries(cur: cursor) -> None:
                                    FROM songplays \
                                    GROUP BY start_time, user_id, song_id, artist_id \
                                    HAVING COUNT(*) > 1;")
-        sp_count.fetchall()
+        dup_records.fetchall()
     
     except Exception as e:
         print(f"Error executing query: {e}")
